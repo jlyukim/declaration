@@ -3,10 +3,10 @@
 ## Phase 0: Setup & Planning
 
 - [x] Write planning documents (`README.md`, `rules.md`, `todos.md`)
-- [ ] Set up Git repository
+- [x] Set up Git repository
 - [ ] Initialize project structure
-  - [ ] `server/` for backend
-  - [ ] `public/` for frontend assets
+  - [x] `server/` for backend
+  - [x] `public/` for frontend assets
 - [ ] Install base dependencies (`express`, `ws`, etc.)
 - [ ] Set up basic dev workflow (live server, nodemon, ESLint optional)
 
@@ -19,6 +19,7 @@ Goal: Single-screen game with auto-dealt cards, hardcoded asks, minimal UI (cons
 - [ ] Represent player hands on server
 - [ ] Hardcode player turn order and basic ask rules
 - [ ] Implement basic ask logic (server-side only)
+- [ ] Declaration UI and logic
 - [ ] Server logs or JSON object output for game state and turn flow
 - [ ] End game condition (5 points) in place, no UI yet
 - [ ] Add console input simulation or dummy front-end buttons for ask
