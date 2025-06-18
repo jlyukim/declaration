@@ -1,8 +1,8 @@
 ## What is Declaration?
 Declaration is a game a friend of ours learned in high school at summer camp, where he played wiht the original player. Soon, Declaration
 caught on as a huge trend in our high school. Now, as college students we've re-create our same beloved game, but online! 
-
-
+<br>
+<br>
 ## The Rules of Declaration
 
 Declaration is played with 6 players, split into two teams of 3. Typically, this is done by arranging players in alternating team order.
