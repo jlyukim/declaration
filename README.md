@@ -24,4 +24,7 @@ This is accomplished through **asks**. When it is your turn to ask, you are allo
 This cycle continues. As players run out of cards, they are effectively "out" of the game. If it was their turn to ask, the turn is transferred to the closest player to their left who still has cards.
 
 The game ends when a team scores **5** out of the 9 possible sets.
-
+<br>
+<br>
+## Strategy
+WIP
