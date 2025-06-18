@@ -1,0 +1,15 @@
+{
+    "name": "declaration-online",
+    "version": "0.0.1",
+    "description": "An online version of the declaration card game made by people with zero webdev experience.",
+    "type": "commonjs",
+    "scripts": {
+        "start": "nodemon index.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.21.2",
+        "nodemon": "^3.1.10",
+        "socket.io": "^4.8.1"
+    }
+}
