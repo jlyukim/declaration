@@ -1,7 +1,11 @@
+@import '@fontsource/cinzel';           /* Regular */
+@import '@fontsource/cinzel/700.css';   /* Bolded */
+@import '@fontsource/cinzel-decorative'; /* Title */
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Cinzel', serif;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 700;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -31,10 +35,41 @@ body {
   min-height: 100vh;
 }
 
+h1.title {
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: 700;
+  font-size: 3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px; 
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+h2.username {
+  width: 114px;
+  height: 50px;
+
+  font-size: 37px;
+  line-height: 50px;
+  /* identical to box height */
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  color: #6A6A6A;
+}
+
+  rect.username {
+    width: 277px;
+    height: 41px;
+
+    /* background: #8f8f8f; adjust to player's team color (red/blue) */
+    /* box-shadow: 0px 0px 20px 8px rgba(255, 242, 0, 0.83); only if their turn */
+    border-radius: 5px;
+  }
 
 button {
   border-radius: 8px;
