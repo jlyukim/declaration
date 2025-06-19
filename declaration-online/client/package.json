@@ -12,12 +12,14 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "@fontsource/cinzel": "^5.2.6",
+    "@fontsource/cinzel-decorative": "^5.2.6"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
-    "@vitejs/plugin-react-swc": "^3.0.0",
+    "@vitejs/plugin-react-swc": "^3.10.2",
     "typescript": "^4.9.3",
     "vite": "^4.1.0"
   }
