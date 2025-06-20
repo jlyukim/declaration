@@ -1,0 +1,14 @@
+
+/*Style from https://www.hover.dev/components/buttons */
+.btn {
+    /* background-color: white; */
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translate(0px, -50px);
+}
+
+.cardImg {
+    
+}
