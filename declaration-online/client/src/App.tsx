@@ -1,9 +1,15 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
+import { Card, cards } from './Components/Card'
+import CardHand from './Components/CardHand'
+
+import './Components/Card.css'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  console.log("Click")
+  const deckType = 'RegularCards'
 
   return (
     <div className="App">
@@ -24,6 +30,17 @@ function App() {
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
+      
+      <div>
+        <CardHand
+          Cards={[
+            { ...cards.defaultCard, deckType },
+            { ...cards.defaultCard, deckType }
+          ]}
+          faceUp={true}
+        />
+      </div>
+      
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
