@@ -21,12 +21,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+  
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Run command in subdirectory
-      working-directory: /declaration-online/client
-    - run: npm ci
-    - run: npm run dev
+  
+    - name: Install dependencies
+      run: npm ci
+      working-directory: declaration-online/client
+  
+    - name: Start development server
+      run: npm run dev
+      working-directory: declaration-online/client
+
