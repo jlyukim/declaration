@@ -28,6 +28,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
+        run: ls
         run: npm ci
         working-directory: ./declaration-online/client
 
