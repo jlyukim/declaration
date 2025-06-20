@@ -9,26 +9,36 @@ export interface CardProps {
 
 export const cards = {
     defaultCard: {
-        deckType: "RegularCards",
         value: "ace_of_spades2",
+        deckType: "RegularCards",
         faceUp: true,
     }
 };
   
-export function Card({ deckType, value, faceUp }: CardProps) {
+export function Card({ value,  deckType, faceUp }: CardProps) {
     const cardDir = `/Decks/${deckType}/${value}.svg`;
     const faceDownCardDir = `/Decks/cardback 2.png`;
+
+    const handleClick = () => {
+        if (faceUp) {
+            console.log(`Card clicked: ${value}`);
+        } else {
+            console.log('Face Down Card Clicked')
+        }
+    };
+
     return(
         <div>
             <button 
                 className="btn"
-                onClick={() => console.log("Button Clicked")}> 
-                <img className="cardImg" // For some reason my styling isn't working
+                onClick={handleClick}> 
+                <img // className="cardImg" // For some reason my styling isn't working
                     src= {faceUp ? cardDir : faceDownCardDir}
                     width={200}
-                    onClick={() => console.log("Card clicked")} 
-                    onPointerEnter={() => console.log("Card pointer enter")} 
-                    onPointerLeave={() => console.log("Card pointer leave")}
+                    height={290}
+                    // onClick={() => console.log("Card clicked")} 
+                    // onPointerEnter={() => console.log("Card pointer enter")} 
+                    // onPointerLeave={() => console.log("Card pointer leave")}
                 />
             </button>
         </div>

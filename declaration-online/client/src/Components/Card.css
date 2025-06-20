@@ -2,6 +2,7 @@
 /*Style from https://www.hover.dev/components/buttons */
 .btn {
     /* background-color: white; */
+    all: unset;
     transition: all 0.3s ease;
 }
 
@@ -9,6 +10,6 @@
     transform: translate(0px, -50px);
 }
 
-.cardImg {
-    
-}
+/* .cardImg {
+    width: 200;
+} */

@@ -9,7 +9,7 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
   console.log("Click")
-  const deckType = 'RegularCards'
+  const [deckType, changeDeck] = useState("RegularCards")
 
   return (
     <div className="App">
@@ -26,6 +26,9 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
+        <button onClick={() => changeDeck((deck) => deck=="RegularCards" ? "HighContrastPlayingCards" : "RegularCards")}>
+          Toggle Deck
+        </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
@@ -34,9 +37,10 @@ function App() {
       <div>
         <CardHand
           Cards={[
-            { ...cards.defaultCard, deckType },
-            { ...cards.defaultCard, deckType }
+            { ...cards.defaultCard},
+            { ...cards.defaultCard}
           ]}
+          deckType={deckType}
           faceUp={true}
         />
       </div>
