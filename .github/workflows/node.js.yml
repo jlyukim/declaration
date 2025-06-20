@@ -27,8 +27,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
 
-      - name: Install dependencies
+      - name: Check Directory
         run: ls
+        working-directory: ./declaration-online/client
+
+      - name: Install dependencies
         run: npm ci
         working-directory: ./declaration-online/client
 
