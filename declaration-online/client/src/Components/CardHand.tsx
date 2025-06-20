@@ -27,4 +27,4 @@ function CardHand({ Cards, faceUp}: HandProps) {
   );
 }
 
-export default CardHand;a
+export default CardHand;
