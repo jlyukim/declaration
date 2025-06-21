@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+          cache-dependency-path: declaration-online/client/package-lock.json
 
       - name: Check client directory contents
         run: ls
