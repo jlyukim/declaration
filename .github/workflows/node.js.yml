@@ -32,6 +32,6 @@ jobs:
         run: npm ci
         working-directory: declaration-online/client
 
-      - name: Start development server
-        run: npm run dev
+      - name: Build the client
+        run: npm run build
         working-directory: declaration-online/client
