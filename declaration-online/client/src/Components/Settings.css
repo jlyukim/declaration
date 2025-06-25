@@ -1,0 +1,35 @@
+.settings-button {
+    all: unset;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    /* background: white; */
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    z-index: 100;
+    transition: box-shadow 0.3s ease;
+}
+
+.settings-button:hover {
+    box-shadow: 0 0 8px gold;
+}
+
+.settings-icon {
+    width: 55px;
+    height: auto;
+    display: block;
+}
+
+.settings-popup {
+  position: fixed;
+  bottom: 65px;
+  right: 80px;
+  background: white;
+  border: 2px solid #888;
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 99;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}

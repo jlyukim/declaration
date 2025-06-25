@@ -1,15 +1,27 @@
 
 /*Style from https://www.hover.dev/components/buttons */
 .btn {
-    /* background-color: white; */
+    background-color: white;
     all: unset;
+    border: none;
+    border-radius: 10px;
+    outline: none;
     transition: all 0.3s ease;
+    
 }
 
 .btn:hover {
     transform: translate(0px, -50px);
 }
 
-/* .cardImg {
-    width: 200;
-} */
+.btn:focus {
+  box-shadow: 0 0 12px 8px gold; /* glow */
+  border-radius: 10px;
+}
+
+.card-img {
+  display: block;
+  width: 169px;
+  height: auto;
+  border-radius: 10px;
+}

@@ -9,32 +9,22 @@ interface HandProps {
 }
 
 function CardHand({ Cards, deckType, faceUp }: HandProps) {
-  const columnCount = Cards.length;
-
-  const containerStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
-    gap: "0px",
-    translate: "10px",
-  };
-
-  const itemStyle: React.CSSProperties = {
-    all: "unset",
-    marginLeft: `${columnCount * -10}px`,
-    zIndex: 0,
-  };
-
   return (
-    <div style={containerStyle}>
+    <div className="card-hand-container">
       {Cards.map((card, index) => (
-        <div key={index} style={itemStyle}>
+        <div
+          key={index}
+          className="card-item"
+          style={{
+            marginLeft: index === 0 ? "0px" : "-60px", // dynamic overlap
+            zIndex: index, // so cards later in the hand render on top
+          }}
+        >
           <Card {...card} deckType={deckType} faceUp={faceUp} />
         </div>
       ))}
     </div>
   );
 }
-
-
 
 export default CardHand;
