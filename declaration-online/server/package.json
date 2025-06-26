@@ -4,7 +4,7 @@
   "description": "An online version of the declaration card game made by people with zero webdev experience.",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon index.ts",
     "test": "jest"
   },
   "dependencies": {
