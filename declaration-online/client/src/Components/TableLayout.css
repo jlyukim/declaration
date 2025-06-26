@@ -1,0 +1,102 @@
+/* layout DOES include the player's hand */
+.table-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;         /* centers everything horizontally */
+  justify-content: space-between;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* .card-count-label{
+  display: none !important;
+} */
+
+.opponent-hand .card-item {
+  pointer-events: none; /* disables clicks and hovers */
+}
+
+.top-players {
+  display: flex;
+  justify-content: space-around;    /* center the hands inside this container */
+  width: 100%;
+  max-width: 100%;
+  height: 20%;
+  box-sizing: border-box;
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+.middle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+}
+
+.current-player-hand {
+  margin-bottom: 2.25rem;
+  display: flex;
+}
+
+/* Opponent hands containers */
+.opponent-hand {
+  position: relative;
+}
+
+/* Rotation for side players */
+.opponent-left {
+  transform: rotate(90deg);
+  transform-origin: bottom left;
+  margin-left: -3em;
+  margin-top: -25rem;
+}
+
+.opponent-right {
+  transform: rotate(-90deg);
+  transform-origin: bottom right;
+  margin-right: -3em;
+  margin-top: -25rem;
+}
+
+/* fix to be displayed over the topmost card. lwky only style the size */
+.card-count-label {
+  position: absolute;
+  color: white;
+  top: -1rem;
+  right: 1.5rem;
+  font-size: 7.75rem;
+  z-index: 100;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* initially show up upside down */
+.top-players .card-count-label{
+  transform: rotate(180deg);
+}
+
+.username-box{
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  top: -4rem;
+  width: 15rem;
+  height: 2.75rem;
+  
+  background-color: #93E3E6;
+  color: #6A6A6A;
+  font-size: 37px;
+  
+  border-radius: .5rem;
+  pointer-events: none;
+  user-select: none;
+  text-align: center;
+}

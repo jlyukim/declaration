@@ -23,7 +23,7 @@ app.get("/api/hand/:playerId", (req, res) => {
   res.json({ hand: game.getHand(id) });
 });
 
-// endpoint to get all hands
+// endpoint to get all hands (ONLY USED FOR TESTING PURPOSES OTHERWISE CHEATING)
 app.get("/api/hands", (req, res) => {
   const allHands = game.players.reduce((acc, playerId) => {
     acc[playerId] = game.getHand(playerId);
@@ -32,6 +32,30 @@ app.get("/api/hands", (req, res) => {
   
   res.json(allHands);
 });
+
+// server/index.ts
+
+// endpoint: send all hands with only current player's cards
+app.get("/api/hands/:currentPlayerId", (req, res) => {
+  const currentPlayerId = req.params.currentPlayerId;
+
+  type Hand = {
+    count: number;
+    cards?: ReturnType<typeof game.getHand>;
+  };
+
+  const allHands = game.players.reduce((acc, playerId) => {
+    const handCards = game.getHand(playerId);
+    acc[playerId] = {
+      count: handCards.length,
+      cards: playerId === currentPlayerId ? handCards : undefined,
+    };
+    return acc;
+  }, {} as Record<string, Hand>);
+
+  res.json(allHands);
+});
+
 
 
 // Start HTTP + WebSocket servers

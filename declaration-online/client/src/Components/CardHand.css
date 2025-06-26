@@ -1,16 +1,13 @@
 /* Styling done in CardHand.tsx */
 /* styling moved back here to CardHand.css 6/23 */ 
+/* styling moved to TableLayout.css 6/25 */
 
 /* CardHand.css */
 
 .card-hand-container {
   display: flex; /* changed from grid to flex for better overlap control */
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  bottom: 35px;
-  left: 50%;
-  transform: translateX(-50%);
-  gap: 0px;
+  /* justify-content: center; */
+  /* align-items: center; */
+  /* bottom: 2rem; */
 }
 

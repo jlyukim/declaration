@@ -1,27 +1,29 @@
-
-/*Style from https://www.hover.dev/components/buttons */
+/* Style from https://www.hover.dev/components/buttons */
 .btn {
-    background-color: white;
-    all: unset;
-    border: none;
-    border-radius: 10px;
-    outline: none;
-    transition: all 0.3s ease;
-    
+  all: unset;
+  background-color: white;
+  border: none;
+  border-radius: 0.625rem; /* 10px */
+  outline: none;
+  transition: all 0.3s ease;
 }
 
 .btn:hover {
-    transform: translate(0px, -50px);
+  transform: translateY(-3rem);
 }
 
 .btn:focus {
-  box-shadow: 0 0 12px 8px gold; /* glow */
-  border-radius: 10px;
+  box-shadow: 0 0 0.75rem 0.5rem gold; /* 12px/8px → 0.75rem/0.5rem */
+  border-radius: 0.625rem;
 }
 
 .card-img {
   display: block;
-  width: 169px;
+  width: 7.5rem;
   height: auto;
-  border-radius: 10px;
+  border-radius: 0.625rem;
+}
+
+.card-face-down {
+  filter: brightness(0.3);
 }
