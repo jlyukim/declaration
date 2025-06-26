@@ -32,7 +32,8 @@ export function Card({ value,  deckType, faceUp }: CardProps) {
             <button 
                 className="btn"
                 onClick={handleClick}> 
-                <img className="card-img" //styling in Card.css
+                <img 
+                    className={`card-img ${faceUp ? '' : 'card-face-down'}`}
                     src= {faceUp ? cardDir : faceDownCardDir}
                     // onClick={() => console.log("Card clicked")} 
                     // onPointerEnter={() => console.log("Card pointer enter")} 

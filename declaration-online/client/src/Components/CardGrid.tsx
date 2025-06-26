@@ -17,9 +17,9 @@ function CardGrid({ Set , deckType }: GridProps) {
           key={index}
           className="card-item"
           style={{
-            gap: "10px",
-            marginLeft: index === 0 ? "0px" : "0px",
-            zIndex: index,
+            // gap: "10px",  
+            marginLeft: index === 0 ? "0px" : "20px",
+            // zIndex: index,
           }}
         >
           <Card
