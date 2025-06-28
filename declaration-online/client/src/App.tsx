@@ -7,11 +7,13 @@ import Settings from "./Components/Settings";
 import sets from "./Components/Sets"
 
 import "./Components/TableLayout.css";
+import "./Components/Overlay.css";
 import "./Components/Card.css";
 import "./App.css";
 
 function App() {
   const [deckType, changeDeck] = useState("RegularCards");
+  const [currentSet, changeSet] = useState("HighDiamonds");
   const [hands, setHands] = useState<Record<
     string,
     { count: number; cards?: Card[] }
@@ -96,6 +98,13 @@ function App() {
             />
           </div>
       </div>
+
+      <div className="overlay">
+            <CardGrid
+              Set={currentSet}
+              deckType={deckType}
+            />
+          </div>
     </div>
   );
 }

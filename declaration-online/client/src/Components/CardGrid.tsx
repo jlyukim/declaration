@@ -11,7 +11,15 @@ interface GridProps {
 function CardGrid({ Set , deckType }: GridProps) {
     const cards = sets.get(Set) ?? [];
     return (
-    <div className="card-hand-container">
+    <div className="card-hand-container"
+      style={{
+            justifySelf: "center",
+            // position: "absolute",
+            // top: "35%",
+            // left: "10%",
+            transform: "translate(0%, +150%)",
+          }}
+    >
       {cards.map((card, index) => (
         <div
           key={index}
