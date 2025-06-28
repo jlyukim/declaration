@@ -1,6 +1,6 @@
 import React from 'react';
 import './CardHand.css';
-import { Card, CardProps } from './Card'
+import { Card, CardProps } from '../Card'
 
 interface HandProps {
     Cards: CardProps[];

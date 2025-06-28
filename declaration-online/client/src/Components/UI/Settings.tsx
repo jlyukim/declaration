@@ -1,7 +1,7 @@
 // src/Components/Settings.tsx
 
 import { useState } from 'react';
-import settingsIcon from '../assets/settingsIcon.png';
+import settingsIcon from '../../assets/settingsIcon.png';
 import './Settings.css';
 
 interface SettingsProps {

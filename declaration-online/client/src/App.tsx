@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import CardHand from "./Components/CardHand";
 import { Card } from "./Types/Card";
-import CardGrid from './Components/CardGrid'
-import OpponentHand from "./Components/OpponentHand";
-import Settings from "./Components/Settings";
-import sets from "./Components/Sets"
 
-import "./Components/TableLayout.css";
-import "./Components/Overlay.css";
-import "./Components/Card.css";
+import OpponentHand from "./Components/Cards/MultiCard/OpponentHand";
+import CardHand from "./Components/Cards/MultiCard/CardHand";
+import CardGrid from './Components/Cards/MultiCard/CardGrid'
+import Settings from "./Components/UI/Settings";
+import sets from "./Components/Cards/Sets"
+
+import "./Components/UI/TableLayout.css";
+import "./Components/UI/Overlay.css";
+import "./Components/Cards/Card.css";
 import "./App.css";
 
 function App() {
