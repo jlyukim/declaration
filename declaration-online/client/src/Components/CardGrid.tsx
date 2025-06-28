@@ -1,7 +1,7 @@
 import React from 'react';
 import './CardHand.css';
 import { Card, CardProps } from './Card'
-import { sets } from '../App'
+import sets from './Sets'
 
 interface GridProps {
     Set: string;

@@ -4,12 +4,11 @@ import { Card } from "./Types/Card";
 import CardGrid from './Components/CardGrid'
 import OpponentHand from "./Components/OpponentHand";
 import Settings from "./Components/Settings";
+import sets from "./Components/Sets"
 
 import "./Components/TableLayout.css";
 import "./Components/Card.css";
 import "./App.css";
-
-export var sets = new Map<string, string[]>();
 
 function App() {
   const [deckType, changeDeck] = useState("RegularCards");
@@ -28,8 +27,6 @@ function App() {
     "player6",
   ];
   const [playerId, setPlayerId] = useState("player1"); // Hardcoded current player
-
-  sets = initSets();
 
   const topPlayers = players.slice(1, 4); // players 2, 3, 4
   const sidePlayers = players.slice(4); // players 5, 6
@@ -101,40 +98,6 @@ function App() {
       </div>
     </div>
   );
-}
-
-function initSets() {
-  const sets = new Map<string, string[]>();
-
-  const ranks = {
-    low: ["2", "3", "4", "5", "6", "7"],
-    high: ["9", "10", "jack", "queen", "king", "ace"],
-    eight: ["8"],
-  };
-
-  const suits = ["Clubs", "Spades", "Hearts", "Diamonds"];
-
-  suits.forEach((suit) => {
-    const lowKey = `Low${suit}`;
-    const highKey = `High${suit}`;
-
-    sets.set(
-      lowKey,
-      ranks.low.map((rank) => `${rank}_of_${suit.toLowerCase()}`)
-    );
-
-    sets.set(
-      highKey,
-      ranks.high.map((rank) => `${rank}_of_${suit.toLowerCase()}`)
-    );
-  });
-
-  // Add eights and jokers
-  const eights = suits.map((suit) => `8_of_${suit.toLowerCase()}`);
-  eights.push("black_joker", "red_joker");
-  sets.set("EightsAndJokers", eights);
-
-  return sets;
 }
 
 export default App;
