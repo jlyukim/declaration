@@ -5,10 +5,12 @@ import { Card, CardProps } from '../Card'
 interface HandProps {
     Cards: CardProps[];
     deckType: string;
-    faceUp: boolean; 
+    faceUp: boolean;
+    onCardClick?: (value: string) => void;
+    selectedCardValue?: string | null;
 }
 
-function CardHand({ Cards, deckType, faceUp }: HandProps) {
+function CardHand({ Cards, deckType, faceUp, onCardClick, selectedCardValue }: HandProps) {
   return (
     <div className="card-hand-container">
       {Cards.map((card, index) => (
@@ -20,7 +22,14 @@ function CardHand({ Cards, deckType, faceUp }: HandProps) {
             zIndex: index, // so cards later in the hand render on top
           }}
         >
-          <Card {...card} deckType={deckType} faceUp={faceUp} />
+          <Card 
+            {...card} 
+            deckType={deckType} 
+            faceUp={faceUp}
+            onCardClick={onCardClick}
+            isSelected={selectedCardValue === card.value}
+          />
+          
         </div>
       ))}
     </div>

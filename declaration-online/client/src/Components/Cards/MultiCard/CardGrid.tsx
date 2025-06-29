@@ -17,7 +17,7 @@ function CardGrid({ Set , deckType }: GridProps) {
             // position: "absolute",
             // top: "35%",
             // left: "10%",
-            transform: "translate(0%, +150%)",
+            // transform: "translate(0%, 0%)",
           }}
     >
       {cards.map((card, index) => (

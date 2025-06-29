@@ -1,15 +1,20 @@
 /* Style from https://www.hover.dev/components/buttons */
 .btn {
   all: unset;
-  background-color: white;
   border: none;
   border-radius: 0.625rem; /* 10px */
   outline: none;
   transition: all 0.3s ease;
 }
 
-.btn:hover {
+.btn:hover{
   transform: translateY(-3rem);
+}
+
+.btn.selected {
+  transform: translateY(-3rem);
+  box-shadow: 0 0 0.75rem 0.5rem gold; /* 12px/8px → 0.75rem/0.5rem */
+  border-radius: 0.625rem;
 }
 
 .btn:focus {

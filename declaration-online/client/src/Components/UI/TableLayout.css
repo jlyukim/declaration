@@ -40,8 +40,10 @@
 }
 
 .current-player-hand {
-  margin-bottom: 2.25rem;
+  /* margin-bottom: 1.25rem; */
+  flex-direction: column;
   display: flex;
+  align-items: center;
 }
 
 /* Opponent hands containers */
@@ -87,7 +89,36 @@
   align-items: center;
   justify-content: center;
 
-  top: -4rem;
+  top: -3.75rem;
+  width: 15rem;
+  height: 2.75rem;
+  left: 1.75rem;
+  
+  background-color: black;
+  color: #6A6A6A;
+  font-size: 37px;
+  
+  border-radius: .5rem;
+  pointer-events: none;
+  user-select: none;
+  text-align: center;
+}
+
+.username-box.red {
+  background-color: #F7B0B0;
+}
+
+.username-box.blue {
+  background-color: #93E3E6;
+}
+
+.player-username {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* top: 5rem; */
   width: 15rem;
   height: 2.75rem;
   
@@ -99,4 +130,12 @@
   pointer-events: none;
   user-select: none;
   text-align: center;
+}
+
+.player-username.red {
+  background-color: #F7B0B0;
+}
+
+.player-username.blue {
+  background-color: #93E3E6;
 }

@@ -34,23 +34,15 @@ h1.title {
   text-transform: uppercase;
 }
 
-rect.username {
-  width: 277px;
-  height: 41px;
-
-  /* background: #8f8f8f; adjust to player's team color (red/blue) */
-  /* box-shadow: 0px 0px 20px 8px rgba(255, 242, 0, 0.83); only if their turn */
-  border-radius: 5px;
-}
-
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid;
   padding: 0.6em 1.2em;
+  color: white;
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 700;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #141414;
   cursor: pointer;
   transition: border-color 0.25s;
 }
