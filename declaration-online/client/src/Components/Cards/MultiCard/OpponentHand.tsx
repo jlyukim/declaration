@@ -18,7 +18,7 @@ function OpponentHand({
 
   return (
     <div className={`opponent-hand opponent-${position}`}>
-      <div className={`username-box ${teamColor}`}>
+      <div className={`username-box ${teamColor} ${position}`}>
         <p className="username">username</p>
       </div>
       <CardHand Cards={cardBacks} deckType="RegularCards" faceUp={false} />

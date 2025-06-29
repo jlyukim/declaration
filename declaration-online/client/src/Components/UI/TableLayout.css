@@ -104,6 +104,10 @@
   text-align: center;
 }
 
+.username-box.top {
+  transform: rotate(180deg);
+}
+
 .username-box.red {
   background-color: #F7B0B0;
 }
