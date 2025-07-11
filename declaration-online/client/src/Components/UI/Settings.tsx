@@ -27,6 +27,13 @@ export default function Settings({ deckType, toggleDeck }: SettingsProps) {
           <button onClick={toggleDeck}>
             Toggle Deck (Current: {deckType})
           </button>
+
+          <button onClick={() => {
+            localStorage.removeItem("playerId");
+            window.location.reload();
+          }}>
+            Switch Player
+          </button>
         </div>
       )}
     </>

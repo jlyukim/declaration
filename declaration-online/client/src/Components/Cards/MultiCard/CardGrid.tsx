@@ -6,18 +6,16 @@ import sets from '../Sets'
 interface GridProps {
     Set: string;
     deckType: string;
+    selectedOverlayCard: string | null;
+    setSelectedOverlayCard: (card: string | null) => void;
 }
 
-function CardGrid({ Set , deckType }: GridProps) {
+function CardGrid({ Set , deckType, selectedOverlayCard, setSelectedOverlayCard}: GridProps) {
     const cards = sets.get(Set) ?? [];
     return (
     <div className="card-hand-container"
       style={{
             justifySelf: "center",
-            // position: "absolute",
-            // top: "35%",
-            // left: "10%",
-            // transform: "translate(0%, 0%)",
           }}
     >
       {cards.map((card, index) => (
@@ -34,6 +32,10 @@ function CardGrid({ Set , deckType }: GridProps) {
             value={card}
             deckType={deckType}
             faceUp={true}
+            isSelected={selectedOverlayCard === card}
+            onCardClick={() => 
+              setSelectedOverlayCard(selectedOverlayCard === card ? null : card)}
+            className="overlay-card"
           />
         </div>
       ))}

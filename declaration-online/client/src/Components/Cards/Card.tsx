@@ -5,8 +5,9 @@ export interface CardProps {
     deckType: string;
     value: string;
     faceUp: boolean;
-    onCardClick?: (value: string) => void;
     isSelected?: boolean;
+    onCardClick?: (value: string) => void;
+    className?: string;
 }
 
 export const cards = {
@@ -17,7 +18,7 @@ export const cards = {
     }
 };
   
-export function Card({ value,  deckType, faceUp, onCardClick, isSelected }: CardProps) {
+export function Card({ value,  deckType, faceUp, onCardClick, isSelected, className}: CardProps) {
     const cardDir = `/Decks/${deckType}/${value}.svg`;
     const faceDownCardDir = `/Decks/cardback.png`;
 
@@ -35,7 +36,7 @@ export function Card({ value,  deckType, faceUp, onCardClick, isSelected }: Card
     return(
         <div>
             <button 
-                className={`btn ${isSelected ? 'selected' : ''}`}
+                className={`btn ${isSelected ? 'selected' : ''} ${className || ""}`}
                 onClick={handleClick}> 
                 <img 
                     className={`card-img ${faceUp ? '' : 'card-face-down'}`}

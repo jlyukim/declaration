@@ -5,6 +5,8 @@
   border-radius: 0.625rem; /* 10px */
   outline: none;
   transition: all 0.3s ease;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn:hover{
@@ -12,14 +14,12 @@
 }
 
 .btn.selected {
-  transform: translateY(-3rem);
   box-shadow: 0 0 0.75rem 0.5rem gold; /* 12px/8px → 0.75rem/0.5rem */
   border-radius: 0.625rem;
 }
 
-.btn:focus {
-  box-shadow: 0 0 0.75rem 0.5rem gold; /* 12px/8px → 0.75rem/0.5rem */
-  border-radius: 0.625rem;
+.btn.selected:not(.overlay-card) {
+  transform: translateY(-3rem);
 }
 
 .card-img {

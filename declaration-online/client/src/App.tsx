@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react"
 import { initSets, getSetFromCard} from "./Components/Cards/Sets"
 import { Card } from "./Types/Card";
+import { formatCardText } from "./Types/utils";
 
 import OpponentHand from "./Components/Cards/MultiCard/OpponentHand";
 import CardHand from "./Components/Cards/MultiCard/CardHand";
@@ -30,23 +31,46 @@ function App() {
     "player5",
     "player6",
   ];
-  const [playerId, setPlayerId] = useState("player1"); // Hardcoded current player
+  const [playerId, setPlayerId] = useState<string>(""); // Dynamically set playerId
+  // const [playerId, setPlayerId] = useState("player1"); // Hardcoded player1 for testing purposes
+  const [selectedTargetId, setSelectedTargetId] = useState<string | null>(null); // keep track of who is being asked
+
+  //Set player Id
+  useEffect(() => {
+    const stored = localStorage.getItem("playerId");
+    if (stored) {
+      setPlayerId(stored);
+    } else {
+      const input = prompt("Enter your Player ID (e.g., player1, player2, etc):");
+      if (input) {
+        localStorage.setItem("playerId", input);
+        setPlayerId(input);
+      }
+    }
+  }, []);
+
+  const currentIndex = players.indexOf(playerId);
+  const rotatedPlayers = [...players.slice(players.indexOf(playerId)), ...players.slice(0, players.indexOf(playerId))];
 
   const playerTeams: Record<string, "red" | "blue"> = {
-  "player1": "red",
+  "player1": "blue",
   "player2": "red",
   "player3": "blue",
   "player4": "red",
   "player5": "blue",
-  "player6": "blue",
+  "player6": "red",
   };
+
+  const topPlayers = [rotatedPlayers[4], rotatedPlayers[3], rotatedPlayers[2]]; // players 3, 4, 5 assuming currentPlayer = player1; backwards because of the way its laid out
+  const sidePlayers = [rotatedPlayers[1], rotatedPlayers[5]]; // players 2, 6 assuming currentPlayer = player1
 
   
   const sets = useMemo(() => initSets(), []);
-  const [selectedCard, setSelectedCardValue] = useState<string | null>(null); //might be able to delete?
+  const [selectedCard, setSelectedCardValue] = useState<string | null>(null); //this is the card in the player's hand (opens up appropriate set)
   const [selectedSet, setSelectedSet] = useState<string | null>(null);
+  const [selectedOverlayCard, setSelectedOverlayCard] = useState<string | null>(null); //this is the card getting asked
   const handleCardClick = (cardValue: string) => {
-    setSelectedCardValue(cardValue); // might be able to delete?
+    setSelectedCardValue(cardValue);
     const cardSet = getSetFromCard(cardValue, sets);
 
     for (const [key, cardsInSet] of sets.entries()) {
@@ -59,8 +83,34 @@ function App() {
     
   };
 
-  const topPlayers = players.slice(1, 4); // players 2, 3, 4
-  const sidePlayers = players.slice(4); // players 5, 6
+  const handleAsk = () => {
+    if (selectedOverlayCard && selectedTargetId) {
+      console.log(`Asking ${selectedTargetId} for ${selectedOverlayCard}`);
+      setLastAsk({
+        fromId: playerId,
+        toId: selectedTargetId!,
+        card: selectedOverlayCard!,
+        result: null, // update based on backend response
+      });
+      // add code: give card to backend
+
+      // After asking:
+      setSelectedOverlayCard(null);
+      setSelectedSet(null);
+      setSelectedTargetId(null);
+      setSelectedCardValue(null);
+    } else {
+      alert("Select a player first.");
+    }
+  };
+
+  const [lastAsk, setLastAsk] = useState<{
+    fromId: string;
+    toId: string;
+    card: string;
+    result: 'has' | 'not' | null;
+  } | null>(null);
+
 
   // Fetch all hands from backend
   useEffect(() => {
@@ -81,7 +131,7 @@ function App() {
     );
   };
 
-  if (!hands) return <div>Loading...</div>;
+  if (!hands || !playerId) return <div>Loading...</div>;
 
   return (
     <div className="App">
@@ -92,24 +142,36 @@ function App() {
           {topPlayers.map((pid) => (
             <OpponentHand
               key={pid}
+              playerId={pid}
               cardCount={hands[pid]?.count || 0}
               position="top"
               teamColor={playerTeams[pid]}
+              selectedTargetId={selectedTargetId}
+              setSelectedTargetId={setSelectedTargetId}
+              isOpponent={playerTeams[pid] !== playerTeams[playerId]}
             />
           ))}
         </div>
 
         <div className="middle-row">
           <OpponentHand
+            playerId={sidePlayers[0]}
             cardCount={hands[sidePlayers[0]]?.count || 0}
             position="left"
-            teamColor={playerTeams["player5"]}
+            teamColor={playerTeams[sidePlayers[0]]}
+            selectedTargetId={selectedTargetId}
+            setSelectedTargetId={setSelectedTargetId}
+            isOpponent={playerTeams[sidePlayers[0]] !== playerTeams[playerId]}
           />
           <h1 className="title">declaration</h1>
           <OpponentHand
+            playerId={sidePlayers[1]}
             cardCount={hands[sidePlayers[1]]?.count || 0}
             position="right"
-            teamColor={playerTeams["player6"]}
+            teamColor={playerTeams[sidePlayers[1]]}
+            selectedTargetId={selectedTargetId}
+            setSelectedTargetId={setSelectedTargetId}
+            isOpponent={playerTeams[sidePlayers[1]] !== playerTeams[playerId]}
           />
         </div>
 
@@ -130,10 +192,16 @@ function App() {
               onCardClick={handleCardClick}
               selectedCardValue={selectedCard}
             />
-            <div className={`player-username ${playerTeams["player1"]}`}>You</div>
-            <div className="set-display">
+            <div className={`player-username ${playerTeams[playerId]}`}>{playerId}</div>
+            {lastAsk?.fromId === playerId && (
+              <div className="speech-bubble ask">
+                {formatCardText(lastAsk.card)}
+              </div>
+            )}
+
+            {/* <div className="set-display"> */}
               {/* console.log(initSets()); */}
-            </div>
+            {/* </div> */}
           </div>
       </div>
 
@@ -141,13 +209,33 @@ function App() {
         <div className="overlay">
           <CardGrid 
             Set={selectedSet} 
-            deckType={deckType} 
-          />
-          <button className="close" onClick={() => {setSelectedSet(null); setSelectedCardValue(null);}}>Close</button>
-        </div>
-      )}
-    </div>
-  );
-}
+            deckType={deckType}
+            selectedOverlayCard={selectedOverlayCard}
+            setSelectedOverlayCard={setSelectedOverlayCard}
+        />
+
+        {selectedOverlayCard ? (
+          <button 
+            className="ask-button"
+            onClick={handleAsk}
+          >
+            Ask
+          </button>
+        ) : (
+          <button 
+            className="close-button"
+            onClick={() => {
+              setSelectedSet(null);
+              setSelectedCardValue(null);
+            }}
+          >
+            Close
+          </button>
+        )}
+      </div>
+    )}
+  </div>
+)};
+
 
 export default App;
