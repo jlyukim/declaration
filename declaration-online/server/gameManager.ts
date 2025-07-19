@@ -1,6 +1,7 @@
 // server/gameManager.ts
 
-import { Deck, Card } from "./deck";
+import { Deck, Card, Rank } from "./deck";
+import { parseCardName } from "../client/src/Types/Utils"
 
 type PlayerID = string;
 
@@ -29,13 +30,47 @@ export class GameManager {
         return this.hands[id] ?? [];
     }
 
-    playCard(id: PlayerID, card: Card): boolean {
-        const hand = this.hands[id];
-        const index = hand.findIndex((c) => JSON.stringify(c) === JSON.stringify(card));
-        if (index !== -1) {
-            hand.splice(index, 1);
-            return true;
+    // ------------------- ASK + RESPONSE LOGIC -------------------
+    handleAsk(playerId: PlayerID, targetId: PlayerID, cardName: string): {
+        success: boolean;
+        received: boolean;
+        message: string;
+    } {
+        const card = parseCardName(cardName);
+
+        if (!card) {
+            return {
+                success: false,
+                received: false,
+                message: "error. no card selected",
+            };
         }
-        return false;
+
+        const targetHand = this.hands[targetId];
+        const targetIndex = targetHand.findIndex(
+            (c) => JSON.stringify(c) === JSON.stringify(card)
+        );
+
+        // Target player has card - successful ask
+        if (targetIndex !== -1) {
+            // Remove from target
+            targetHand.splice(targetIndex, 1);
+
+            // Add to player
+            this.hands[playerId].push(card);
+
+            return {
+                success: true,
+                received: true,
+                message: `${playerId} got ${cardName} from ${targetId}`
+            };
+        }
+
+        // Target player didn't have card
+        return {
+            success: true,
+            received: false,
+            message: `${targetId} does not have ${cardName}`
+        };
     }
 }

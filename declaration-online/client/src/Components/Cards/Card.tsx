@@ -41,7 +41,6 @@ export function Card({ value,  deckType, faceUp, onCardClick, isSelected, classN
                 <img 
                     className={`card-img ${faceUp ? '' : 'card-face-down'}`}
                     src= {faceUp ? cardDir : faceDownCardDir}
-                    // onClick={() => console.log("Card clicked")}
                 />
             </button>
         </div>

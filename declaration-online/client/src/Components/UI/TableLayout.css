@@ -148,27 +148,3 @@
 .player-username.blue {
   background-color: #93E3E6;
 }
-
-.speech-bubble {
-  position: absolute;
-  bottom: 15rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  color: black;
-  border-radius: 1rem;
-  padding: 0.5rem 1rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
-  white-space: nowrap;
-  z-index: 20;
-}
-
-.speech-bubble.ask {
-  background: #eecccc;
-}
-
-.speech-bubble.response {
-  background: #c0e3e7;
-}

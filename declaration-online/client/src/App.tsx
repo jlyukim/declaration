@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react"
 import { initSets, getSetFromCard} from "./Components/Cards/Sets"
 import { Card } from "./Types/Card";
-import { formatCardText } from "./Types/utils";
+import { formatTextStringToSymbol, formatTextObjectToString } from "./Types/Utils";
 
 import OpponentHand from "./Components/Cards/MultiCard/OpponentHand";
 import CardHand from "./Components/Cards/MultiCard/CardHand";
@@ -13,6 +13,7 @@ import "./Components/UI/TableLayout.css";
 import "./Components/UI/Overlay.css";
 import "./Components/Cards/Card.css";
 import "./App.css";
+import { cards } from "./Components/Cards/Card";
 
 function App() {
   const [deckType, changeDeck] = useState("RegularCards");
@@ -21,6 +22,14 @@ function App() {
     string,
     { count: number; cards?: Card[] }
   > | null>(null);
+
+  // ------------------- WEBSOCKET CONNECTION -------------------
+  const socket = new WebSocket("ws://localhost:3001");
+  socket.onopen = () => {
+    console.log("✅ Frontend connected to WebSocket server");
+  }
+
+  // ------------------- PLAYER ID -------------------
 
   // Hardcoded players and team color
   const players = [
@@ -33,7 +42,7 @@ function App() {
   ];
   const [playerId, setPlayerId] = useState<string>(""); // Dynamically set playerId
   // const [playerId, setPlayerId] = useState("player1"); // Hardcoded player1 for testing purposes
-  const [selectedTargetId, setSelectedTargetId] = useState<string | null>(null); // keep track of who is being asked
+  
 
   //Set player Id
   useEffect(() => {
@@ -49,8 +58,7 @@ function App() {
     }
   }, []);
 
-  const currentIndex = players.indexOf(playerId);
-  const rotatedPlayers = [...players.slice(players.indexOf(playerId)), ...players.slice(0, players.indexOf(playerId))];
+  const rotatedPlayers = [...players.slice(players.indexOf(playerId)), ...players.slice(0, players.indexOf(playerId))]; //redistributes players around the table based on current playerId
 
   const playerTeams: Record<string, "red" | "blue"> = {
   "player1": "blue",
@@ -64,6 +72,7 @@ function App() {
   const topPlayers = [rotatedPlayers[4], rotatedPlayers[3], rotatedPlayers[2]]; // players 3, 4, 5 assuming currentPlayer = player1; backwards because of the way its laid out
   const sidePlayers = [rotatedPlayers[1], rotatedPlayers[5]]; // players 2, 6 assuming currentPlayer = player1
 
+  // ------------------- CARD SELECT -------------------
   
   const sets = useMemo(() => initSets(), []);
   const [selectedCard, setSelectedCardValue] = useState<string | null>(null); //this is the card in the player's hand (opens up appropriate set)
@@ -83,33 +92,77 @@ function App() {
     
   };
 
-  const handleAsk = () => {
-    if (selectedOverlayCard && selectedTargetId) {
-      console.log(`Asking ${selectedTargetId} for ${selectedOverlayCard}`);
-      setLastAsk({
-        fromId: playerId,
-        toId: selectedTargetId!,
-        card: selectedOverlayCard!,
-        result: null, // update based on backend response
-      });
-      // add code: give card to backend
+  // ------------------- ASK + RESPONSE LOGIC -------------------
+  const [selectedTargetId, setSelectedTargetId] = useState<string | null>(null); // keep track of who is being asked
+  const playerHand = hands?.[playerId]?.cards ?? []; // Keep track of player hand; this needs to get updated whenever player hand changes
+  
 
-      // After asking:
-      setSelectedOverlayCard(null);
-      setSelectedSet(null);
-      setSelectedTargetId(null);
-      setSelectedCardValue(null);
-    } else {
+  const handleAsk = async () => {
+    if (!selectedTargetId) {
       alert("Select a player first.");
+      return;
     }
-  };
 
-  const [lastAsk, setLastAsk] = useState<{
-    fromId: string;
-    toId: string;
-    card: string;
-    result: 'has' | 'not' | null;
-  } | null>(null);
+    //checks if asking for a card they already have
+    const ownsAskedCard = playerHand.some((card) => formatTextObjectToString(card) === selectedOverlayCard)
+    if (ownsAskedCard) {
+      console.log(`Asked for own card. Give card to opponent: ${selectedTargetId}`)
+      // TODO: reset selectedoverlaycard, selectedtargetid, selectedcard value
+        // TODO: give the card to the selectedtarget player
+          // TODO: change turn to selectedtarget player
+    }
+
+
+  }
+  // try {
+  //   const response = await fetch("http://localhost:3001/api/ask", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       from: playerId,
+  //       to: selectedTargetId,
+  //       card: selectedOverlayCard,
+  //     }),
+  //   });
+
+  //   if (!response.ok) {
+  //     alert("ask failed");
+  //     throw new Error(`Ask failed: ${response.status}`)
+  //   }
+
+  //   const result = await response.json();
+  //   console.log("Ask result:", result); //TODO: have the results display to everyone
+  
+  // } catch (error) {
+  //   console.error("Error sending ask:", error);
+  // } 
+  // ------- OLD OLD CODE ----------
+  // const handleAsk = async () => {
+  //   if (!selectedOverlayCard || !selectedTargetId || !playerId) {
+  //     alert("Select a player and a card first.");
+  //     return;
+  //   }
+
+  //   console.log(`Asking ${selectedTargetId} for ${selectedOverlayCard}`);
+
+  //   await fetch("http://localhost:3001/api/ask", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       from: playerId,
+  //       to: selectedTargetId,
+  //       card: selectedOverlayCard,
+  //     }),
+  //   });
+
+  //   // Reset UI state
+  //   setSelectedOverlayCard(null);
+  //   setSelectedSet(null);
+  //   // setSelectedTargetId(null); keep the target selected after ask
+  //   setSelectedCardValue(null);
+  // };
+
+  //Fetch ask card from backend
 
 
   // Fetch all hands from backend
@@ -193,15 +246,11 @@ function App() {
               selectedCardValue={selectedCard}
             />
             <div className={`player-username ${playerTeams[playerId]}`}>{playerId}</div>
-            {lastAsk?.fromId === playerId && (
+            {/* {lastAsk?.from === playerId && (
               <div className="speech-bubble ask">
                 {formatCardText(lastAsk.card)}
               </div>
-            )}
-
-            {/* <div className="set-display"> */}
-              {/* console.log(initSets()); */}
-            {/* </div> */}
+            )} */}
           </div>
       </div>
 

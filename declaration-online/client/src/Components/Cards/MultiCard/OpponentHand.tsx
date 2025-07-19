@@ -1,4 +1,5 @@
 import CardHand from "./CardHand";
+import { formatTextObjectToString, formatTextStringToSymbol } from "../../../Types/Utils";
 
 interface OpponentHandProps {
   cardCount: number;
@@ -8,8 +9,12 @@ interface OpponentHandProps {
   selectedTargetId: string | null;
   setSelectedTargetId: (id: string | null) => void;
   isOpponent: boolean;
-  responseResult?: 'has' | 'not';
-  askedByPlayerId?: string;
+  askState?: {
+    from: string;
+    to: string;
+    card: string;
+    result?: "has" | "not" | null;
+  } | null
 }
 
 function OpponentHand({
@@ -20,8 +25,7 @@ function OpponentHand({
   selectedTargetId,
   setSelectedTargetId,
   isOpponent,
-  responseResult,
-  askedByPlayerId
+  askState
 }: OpponentHandProps) {
   const cardsToShow = Math.min(cardCount, 4);
   const cardBacks = new Array(cardsToShow).fill({
@@ -52,10 +56,27 @@ function OpponentHand({
       </div>
       <CardHand Cards={cardBacks} deckType="RegularCards" faceUp={false} />
       {cardCount > 4 && <div className="card-count-label">{cardCount}</div>}
-      {askedByPlayerId && responseResult && (
-      <div className="speech-bubble response">
-        {responseResult === 'has' ? '✅' : '❌'}
-      </div>
+      {askState && askState.from === playerId && (
+      // {/* {askState &&( */}
+        <>
+          <div className="speech-bubble ask">
+            {formatTextStringToSymbol(askState.card)}
+          </div>
+          {console.log("askState in OpponentHand:", askState)}
+        </>
+        
+      )}
+      {askState && askState.from === playerId && askState.result && (
+      // {/* {askState && askState.result && ( */}
+      <>
+        {console.log("Rendering response bubble for", playerId, "with result:", askState.result)}
+        <div className="speech-bubble response">
+          {askState.result === "has" ? "✅" : "❌"}
+          <div style={{ background: "red", zIndex: 9999 }}>
+            RESPONSE
+          </div>
+        </div>
+      </>
     )}
     </div>
   );

@@ -1,7 +1,5 @@
-// server/index.ts
-
-import express from "express";
-import { WebSocketServer } from "ws";
+import express, { Request, Response } from "express";
+import { WebSocketServer, WebSocket } from "ws";
 import cors from "cors";
 import { GameManager } from "./gameManager";
 import { Card } from "./deck";
@@ -12,30 +10,27 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-// create 6 players
+// Initialize players and game manager
 const players = ["player1", "player2", "player3", "player4", "player5", "player6"];
 const game = new GameManager(players);
 
-
-// REST endpoint to get a hand
+// REST endpoint: get hand for a single player
 app.get("/api/hand/:playerId", (req, res) => {
   const id = req.params.playerId;
   res.json({ hand: game.getHand(id) });
 });
 
-// endpoint to get all hands (ONLY USED FOR TESTING PURPOSES OTHERWISE CHEATING)
+// REST endpoint: get all hands (FOR DEBUG/TESTING ONLY)
 app.get("/api/hands", (req, res) => {
   const allHands = game.players.reduce((acc, playerId) => {
     acc[playerId] = game.getHand(playerId);
     return acc;
   }, {} as Record<string, typeof game.getHand extends (...args: any) => infer R ? R : never>);
-  
+
   res.json(allHands);
 });
 
-// server/index.ts
-
-// endpoint: send all hands with only current player's cards
+// REST endpoint: get hand counts and cards for current player
 app.get("/api/hands/:currentPlayerId", (req, res) => {
   const currentPlayerId = req.params.currentPlayerId;
 
@@ -58,39 +53,54 @@ app.get("/api/hands/:currentPlayerId", (req, res) => {
 
 
 
-// Start HTTP + WebSocket servers
+
+// ------------------- WEBSOCKET SERVER -------------------
+
 const server = app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
 
 const wss = new WebSocketServer({ server });
-
-type WSMessage =
-  | { type: "play_card"; playerId: string; card: Card }
-  | { type: "message"; text: string };
+const clients = new Set<WebSocket>();
 
 wss.on("connection", (socket) => {
-  console.log("🧠 New WebSocket connection");
+  console.log("🔌 New WebSocket connection");
+  clients.add(socket);
 
   socket.on("message", (data) => {
     const msg = JSON.parse(data.toString()) as WSMessage;
 
-    if (msg.type === "play_card") {
-      const success = game.playCard(msg.playerId, msg.card);
-      if (success) {
-        // broadcast to all players
-        const broadcast = JSON.stringify({
-          type: "card_played",
-          playerId: msg.playerId,
-          card: msg.card,
-        });
+    // ------------------- ASK + RESPONSE LOGIC -------------------
+    if (msg.type === "ask") {
 
-        wss.clients.forEach((client) => {
-          if (client.readyState === client.OPEN) {
-            client.send(broadcast);
-          }
+      const result = game.handleAsk(msg.playerId, msg.targetPlayerId, msg.card);
+      if (result) {
+        broadcast({
+          type: "ask_result",
+          playerId: msg.playerId,
+          targetPlayerId: msg.targetPlayerId,
+          card: msg.card,
+          ...result,
         });
       }
     }
   });
+
+  socket.on("close", () => {
+    clients.delete(socket);
+  });
 });
+
+type WSMessage =
+  | { type: "ask"; playerId: string; targetPlayerId: string; card: string }
+  | { type: "message"; text: string };
+
+// Broadcast to all connected clients
+function broadcast(data: any) {
+  const json = JSON.stringify(data);
+  clients.forEach((client) => {
+    if (client.readyState === client.OPEN) {
+      client.send(json);
+    }
+  });
+}
