@@ -27,9 +27,9 @@ export function parseCardName(cardName: string): Card | null {
   if (cardName === "black_joker") return { type: "Joker", color: "Black" };
   if (cardName === "red_joker") return { type: "Joker", color: "Red" };
 
-  const [rankStr, , suit] = cardName.split("_of_");
+  const [rankStr, suit] = cardName.split("_of_");
 
-  const rank = isNaN(Number(rankStr)) ? rankStr : Number(rankStr);
+  const rank = rankStr; // Keep as string to match deck format
 
   if (typeof suit !== "string") return null;
 

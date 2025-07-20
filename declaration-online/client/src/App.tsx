@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react"
+import { useRef, useEffect, useState, useMemo } from "react"
 import { initSets, getSetFromCard} from "./Components/Cards/Sets"
 import { Card } from "./Types/Card";
 import { formatTextStringToSymbol, formatTextObjectToString } from "./Types/Utils";
@@ -16,6 +16,7 @@ import "./App.css";
 import { cards } from "./Components/Cards/Card";
 
 function App() {
+  const socketRef = useRef<WebSocket | null>(null);
   const [deckType, changeDeck] = useState("RegularCards");
   const [currentSet, changeSet] = useState("HighDiamonds");
   const [hands, setHands] = useState<Record<
@@ -24,10 +25,19 @@ function App() {
   > | null>(null);
 
   // ------------------- WEBSOCKET CONNECTION -------------------
-  const socket = new WebSocket("ws://localhost:3001");
-  socket.onopen = () => {
-    console.log("✅ Frontend connected to WebSocket server");
-  }
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:3001");
+    socketRef.current = socket;
+
+    socket.onopen = () => {
+      console.log("✅ Frontend connected to WebSocket server");
+    };
+
+    // Clean up on unmount
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   // ------------------- PLAYER ID -------------------
 
@@ -97,70 +107,59 @@ function App() {
   const playerHand = hands?.[playerId]?.cards ?? []; // Keep track of player hand; this needs to get updated whenever player hand changes
   
 
-  const handleAsk = async () => {
-    if (!selectedTargetId) {
-      alert("Select a player first.");
+  const handleAsk = () => {
+    if (!selectedOverlayCard || !selectedTargetId || !playerId) {
+      alert("Select a player and a card first.");
       return;
     }
 
-    //checks if asking for a card they already have
-    const ownsAskedCard = playerHand.some((card) => formatTextObjectToString(card) === selectedOverlayCard)
+    // If asking for a card you already own, handle "give" logic (if needed)
+    const ownsAskedCard = playerHand.some(
+      (card) => formatTextObjectToString(card) === selectedOverlayCard
+    );
     if (ownsAskedCard) {
-      console.log(`Asked for own card. Give card to opponent: ${selectedTargetId}`)
-      // TODO: reset selectedoverlaycard, selectedtargetid, selectedcard value
-        // TODO: give the card to the selectedtarget player
-          // TODO: change turn to selectedtarget player
+      // TODO: Implement "give" logic via WebSocket or REST if needed
+      alert("You cannot ask for a card you already have. (Implement give logic if needed)");
+      setSelectedOverlayCard(null);
+      setSelectedTargetId(null);
+      setSelectedCardValue(null);
+      setSelectedSet(null);
+      return;
     }
 
+    // Send ask request via WebSocket
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(
+        JSON.stringify({
+          type: "ask",
+          playerId: playerId,
+          targetPlayerId: selectedTargetId,
+          card: selectedOverlayCard,
+        })
+      );
+    } else {
+      alert("WebSocket is not connected.");
+    }
 
-  }
-  // try {
-  //   const response = await fetch("http://localhost:3001/api/ask", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({
-  //       from: playerId,
-  //       to: selectedTargetId,
-  //       card: selectedOverlayCard,
-  //     }),
-  //   });
+    // Reset UI state
+    setSelectedOverlayCard(null);
+    setSelectedSet(null);
+    // setSelectedTargetId(null); // Optionally keep the target selected
+    setSelectedCardValue(null);
+  };
 
-  //   if (!response.ok) {
-  //     alert("ask failed");
-  //     throw new Error(`Ask failed: ${response.status}`)
-  //   }
-
-  //   const result = await response.json();
-  //   console.log("Ask result:", result); //TODO: have the results display to everyone
-  
-  // } catch (error) {
-  //   console.error("Error sending ask:", error);
-  // } 
-  // ------- OLD OLD CODE ----------
-  // const handleAsk = async () => {
-  //   if (!selectedOverlayCard || !selectedTargetId || !playerId) {
-  //     alert("Select a player and a card first.");
-  //     return;
-  //   }
-
-  //   console.log(`Asking ${selectedTargetId} for ${selectedOverlayCard}`);
-
-  //   await fetch("http://localhost:3001/api/ask", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({
-  //       from: playerId,
-  //       to: selectedTargetId,
-  //       card: selectedOverlayCard,
-  //     }),
-  //   });
-
-  //   // Reset UI state
-  //   setSelectedOverlayCard(null);
-  //   setSelectedSet(null);
-  //   // setSelectedTargetId(null); keep the target selected after ask
-  //   setSelectedCardValue(null);
-  // };
+  useEffect(() => {
+    if (!socketRef.current) return;
+    const socket = socketRef.current;
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "ask_result") {
+        // Handle the result (show a message, update UI, etc.)
+        console.log("Ask result:", data);
+        // Optionally, show a notification or update state here
+      }
+    };
+  }, [/* dependencies if needed */]);
 
   //Fetch ask card from backend
 

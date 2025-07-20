@@ -1,6 +1,6 @@
 // server/deck.ts
 
-export type Suit = "Hearts" | "Diamonds" | "Clubs" | "Spades";
+export type Suit = "hearts" | "diamonds" | "clubs" | "spades";
 export type Rank = "ace" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "jack" | "queen" | "king";
 export type JokerColor = "Red" | "Black";
 
@@ -16,7 +16,7 @@ export class Deck {
   }
 
   private generateStandardCards(): Card[] {
-    const suits: Suit[] = ["Hearts", "Diamonds", "Clubs", "Spades"];
+    const suits: Suit[] = ["hearts", "diamonds", "clubs", "spades"];
     const ranks: Rank[] = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"];
 
     return suits.flatMap((suit) =>

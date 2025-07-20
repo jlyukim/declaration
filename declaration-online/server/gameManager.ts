@@ -47,6 +47,9 @@ export class GameManager {
         }
 
         const targetHand = this.hands[targetId];
+        console.log("Comparing cards:");
+        console.log("Target hand card:", targetHand);
+        console.log("Parsed card:", card);
         const targetIndex = targetHand.findIndex(
             (c) => JSON.stringify(c) === JSON.stringify(card)
         );
