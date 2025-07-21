@@ -24,6 +24,8 @@ function App() {
     { count: number; cards?: Card[] }
   > | null>(null);
 
+  const [lastAsk, setLastAsk] = useState<{ from: string; card: string } | null>(null);
+
   // ------------------- WEBSOCKET CONNECTION -------------------
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:3001");
@@ -137,6 +139,7 @@ function App() {
           card: selectedOverlayCard,
         })
       );
+      setLastAsk({ from: playerId, card: selectedOverlayCard! });
     } else {
       alert("WebSocket is not connected.");
     }
@@ -245,11 +248,11 @@ function App() {
               selectedCardValue={selectedCard}
             />
             <div className={`player-username ${playerTeams[playerId]}`}>{playerId}</div>
-            {/* {lastAsk?.from === playerId && (
+            {lastAsk?.from === playerId && (
               <div className="speech-bubble ask">
-                {formatCardText(lastAsk.card)}
+                {formatTextStringToSymbol(lastAsk.card)}
               </div>
-            )} */}
+            )}
           </div>
       </div>
 
