@@ -25,6 +25,7 @@ function App() {
   > | null>(null);
 
   const [lastAsk, setLastAsk] = useState<{ from: string; card: string } | null>(null);
+  const [localHand, setLocalHand] = useState<Card[]>([]); // Local hand order for drag-and-drop
 
   // ------------------- WEBSOCKET CONNECTION -------------------
   useEffect(() => {
@@ -180,6 +181,17 @@ function App() {
     return () => clearInterval(interval);
   }, [playerId]);
 
+  // Sync localHand with backend hand only if hand size changes
+  useEffect(() => {
+    if (hands && playerId && hands[playerId]?.cards) {
+      const backendHand = hands[playerId]!.cards!;
+      if (localHand.length !== backendHand.length) {
+        setLocalHand(backendHand);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hands, playerId]);
+
   const toggleDeck = () => {
     changeDeck((deck) =>
       deck === "RegularCards" ? "HighContrastPlayingCards" : "RegularCards"
@@ -233,19 +245,32 @@ function App() {
         <div className="current-player-hand">
             <CardHand
               Cards={
-                hands[playerId]?.cards?.map((card) => ({
+                localHand.map((card) => ({
                   deckType,
                   faceUp: true,
                   value:
                     "rank" in card && "suit" in card
                       ? `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}`
                       : `${card.color.toLowerCase()}_joker`,
-                })) || []
+                }))
               }
               deckType={deckType}
               faceUp={true}
               onCardClick={handleCardClick}
               selectedCardValue={selectedCard}
+              onReorder={(newCards) => {
+                // Map CardProps[] back to Card[] for localHand
+                const reordered = newCards.map((c) => {
+                  return localHand.find((card) => {
+                    if ("rank" in card && "suit" in card) {
+                      return `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}` === c.value;
+                    } else {
+                      return `${card.color.toLowerCase()}_joker` === c.value;
+                    }
+                  })!;
+                });
+                setLocalHand(reordered);
+              }}
             />
             <div className={`player-username ${playerTeams[playerId]}`}>{playerId}</div>
             {lastAsk?.from === playerId && (
