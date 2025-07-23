@@ -10,7 +10,9 @@
   "dependencies": {
     "@fontsource/cinzel": "^5.2.6",
     "@fontsource/cinzel-decorative": "^5.2.6",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {

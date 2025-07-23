@@ -148,3 +148,7 @@
 .player-username.blue {
   background-color: #93E3E6;
 }
+
+.current-player-hand .card-item {
+  pointer-events: auto;
+}

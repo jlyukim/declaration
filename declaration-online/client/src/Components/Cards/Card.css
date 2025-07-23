@@ -1,5 +1,5 @@
 /* Style from https://www.hover.dev/components/buttons */
-.btn {
+.btn, .btn[role="button"] {
   all: unset;
   border: none;
   border-radius: 0.625rem; /* 10px */
@@ -7,18 +7,20 @@
   transition: all 0.3s ease;
   transform: none;
   box-shadow: none;
+  cursor: pointer;
+  display: inline-block;
 }
 
-.btn:hover{
+.btn:hover, .btn[role="button"]:hover {
   transform: translateY(-3rem);
 }
 
-.btn.selected {
+.btn.selected, .btn[role="button"].selected {
   box-shadow: 0 0 0.75rem 0.5rem gold; /* 12px/8px → 0.75rem/0.5rem */
   border-radius: 0.625rem;
 }
 
-.btn.selected:not(.overlay-card) {
+.btn.selected:not(.overlay-card), .btn[role="button"].selected:not(.overlay-card) {
   transform: translateY(-3rem);
 }
 
