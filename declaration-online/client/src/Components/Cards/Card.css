@@ -32,3 +32,12 @@
 .card-face-down {
   filter: brightness(0.3);
 }
+
+.btn.selected.selected-color-1 { box-shadow: 0 0 0.75rem .5rem blue; }
+.btn.selected.selected-color-2 { box-shadow: 0 0 0.75rem .5rem red; }
+.btn.selected.selected-color-3 { box-shadow: 0 0 0.75rem .5rem white;}
+
+.selected-color-1 { box-shadow: 0 0 0.75rem .5rem blue; }
+.selected-color-2 { box-shadow: 0 0 0.75rem .5rem red; }
+.selected-color-3 { box-shadow: 0 0 0.75rem .5rem white;}
+/* Add more as needed */

@@ -36,6 +36,13 @@ export function initSets() {
   eights.push("black_joker", "red_joker");
   sets.set("EightsAndJokers", eights);
 
+  const setOfSets = [
+    ...suits.map((suit) => `7_of_${suit.toLowerCase()}`),
+    ...suits.map((suit) => `ace_of_${suit.toLowerCase()}`),
+    "red_joker"
+  ];
+  sets.set("SetOfSets", setOfSets);
+
   return sets;
 }
 
@@ -59,4 +66,25 @@ export function getSetFromCard(cardValue: string, sets: Map<string, string[]>) {
     }
 
     return null;
+}
+
+export function getSetStrFromCard(cardValue: string, sets: Map<string, string[]>) {
+  if (cardValue.includes("joker")) {
+        return ("EightsAndJokers");
+    }
+  
+    const [rank, suit] = cardValue.split('_of_');
+    const suitCap = suit.charAt(0).toUpperCase() + suit.slice(1);
+
+    if (["2", "3", "4", "5", "6", "7"].includes(rank)) {
+    return (`Low${suitCap}`);
+    }
+    if (["9", "10", "jack", "queen", "king", "ace"].includes(rank)) {
+    return (`High${suitCap}`);
+    }
+    if (rank === "8") {
+    return "EightsAndJokers";
+    }
+
+    return "SetOfSets"; // Default case if no match found
 }

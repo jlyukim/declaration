@@ -7,6 +7,7 @@ import OpponentHand from "./Components/Cards/MultiCard/OpponentHand";
 import CardHand from "./Components/Cards/MultiCard/CardHand";
 import CardGrid from './Components/Cards/MultiCard/CardGrid'
 import Settings from "./Components/UI/Settings";
+import Declare from "./Components/UI/Declare";
 
 
 import "./Components/UI/TableLayout.css";
@@ -192,7 +193,6 @@ function App() {
     <div className="App">
       <Settings deckType={deckType} toggleDeck={toggleDeck} />
       <div className="table-layout">
-        
         <div className="top-players">
           {topPlayers.map((pid) => (
             <OpponentHand
@@ -218,7 +218,12 @@ function App() {
             setSelectedTargetId={setSelectedTargetId}
             isOpponent={playerTeams[sidePlayers[0]] !== playerTeams[playerId]}
           />
-          <h1 className="title">declaration</h1>
+          {/* <h1 className="title">declaration</h1> */}
+          <Declare
+            deckType={deckType}
+            selectedOverlayCard={selectedOverlayCard}
+            setSelectedOverlayCard={setSelectedOverlayCard}
+          />
           <OpponentHand
             playerId={sidePlayers[1]}
             cardCount={hands[sidePlayers[1]]?.count || 0}
@@ -263,6 +268,7 @@ function App() {
             deckType={deckType}
             selectedOverlayCard={selectedOverlayCard}
             setSelectedOverlayCard={setSelectedOverlayCard}
+            cardCycle={false}
         />
 
         {selectedOverlayCard ? (

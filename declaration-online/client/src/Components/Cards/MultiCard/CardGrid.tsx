@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './CardHand.css';
 import { Card, CardProps } from '../Card'
 import sets from '../Sets'
@@ -8,11 +8,22 @@ interface GridProps {
     deckType: string;
     selectedOverlayCard: string | null;
     setSelectedOverlayCard: (card: string | null) => void;
+    cardCycle: boolean;
 }
 
-function CardGrid({ Set , deckType, selectedOverlayCard, setSelectedOverlayCard}: GridProps) {
-    const cards = sets.get(Set) ?? [];
-    return (
+function CardGrid({ Set , deckType, selectedOverlayCard, setSelectedOverlayCard, cardCycle}: GridProps) {
+  const cards = sets.get(Set) ?? [];
+  const [colorIndices, setColorIndices] = React.useState<number[]>(Array(cards.length).fill(0));
+
+  function updateColorIndex(idx: number) {
+    if (!cardCycle) return; // Only cycle colors if cardCycle is true
+
+    setColorIndices(prev =>
+      prev.map((val, i) => i === idx ? (val < 3 ? val + 1 : 0) : val)
+    );
+  }
+
+  return (
     <div className="card-hand-container"
       style={{
             justifySelf: "center",
@@ -36,12 +47,13 @@ function CardGrid({ Set , deckType, selectedOverlayCard, setSelectedOverlayCard}
             onCardClick={() => 
               setSelectedOverlayCard(selectedOverlayCard === card ? null : card)}
             className="overlay-card"
+            colorIndex={colorIndices[index]}
+            onCycleColor={() => updateColorIndex(index)}
           />
         </div>
       ))}
     </div>
   );
-
 }
 
 export default CardGrid;

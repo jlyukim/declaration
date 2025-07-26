@@ -1,0 +1,17 @@
+.declare-button {
+    all: unset;
+    border: none;
+    border-radius: 50%;
+    padding: 30px;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: bold;
+    font-size: 4rem;
+    text-transform: uppercase;
+}
+
+.declare-button:hover {
+    box-shadow: 0 0 8px gold;
+}
