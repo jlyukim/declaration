@@ -1,9 +1,23 @@
 // server/gameManager.ts
 
 import { Deck, Card, Rank } from "./deck";
-import { parseCardName } from "../client/src/Types/Utils"
+// import { parseCardName } from "../client/src/Types/Utils"
 
 type PlayerID = string;
+
+var parseCardName: any; // Use 'any' or define a type for the imported module's exports
+
+async function loadUtils() {
+  const Utils = await import("../client/src/Types/Utils");
+  parseCardName = Utils.parseCardName;
+}
+loadUtils();
+
+// (async () => {
+//     // Dynamic import
+//     const Utils = await import("../client/src/Types/Utils");
+//     const parseCardName = Utils.parseCardName; // Access the specific named export
+//   })();
 
 export class GameManager {
     deck = new Deck();
@@ -30,6 +44,7 @@ export class GameManager {
         return this.hands[id] ?? [];
     }
 
+    
     // ------------------- ASK + RESPONSE LOGIC -------------------
     handleAsk(playerId: PlayerID, targetId: PlayerID, cardName: string): {
         success: boolean;
@@ -37,7 +52,7 @@ export class GameManager {
         message: string;
     } {
         const card = parseCardName(cardName);
-
+        
         if (!card) {
             return {
                 success: false,
