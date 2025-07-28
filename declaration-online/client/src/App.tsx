@@ -26,6 +26,9 @@ function App() {
   > | null>(null);
 
   const [lastAsk, setLastAsk] = useState<{ from: string; card: string } | null>(null);
+  
+  // Local state to maintain card order for the current player
+  const [localHandOrder, setLocalHandOrder] = useState<Card[]>([]);
 
   // ------------------- WEBSOCKET CONNECTION -------------------
   useEffect(() => {
@@ -173,13 +176,28 @@ function App() {
     function fetchHands() {
       fetch(`http://localhost:3001/api/hands/${playerId}`)
         .then((res) => res.json())
-        .then((data) => setHands(data))
+        .then((data) => {
+          setHands(data);
+          
+          // Sync local hand order with backend data
+          if (data && playerId && data[playerId]?.cards) {
+            const backendCards = data[playerId].cards;
+            
+            // Only update local order if:
+            // 1. Local order is empty (first load)
+            // 2. Backend hand size changed (cards added/removed)
+            if (localHandOrder.length === 0 || localHandOrder.length !== backendCards.length) {
+              setLocalHandOrder(backendCards);
+            }
+            // If sizes match, preserve local order (user's reordering)
+          }
+        })
         .catch(console.error);
     }
     fetchHands();
     const interval = setInterval(fetchHands, 3000);
     return () => clearInterval(interval);
-  }, [playerId]);
+  }, [playerId, localHandOrder.length]); // Include localHandOrder.length to prevent infinite loops
 
   const toggleDeck = () => {
     changeDeck((deck) =>
@@ -238,19 +256,35 @@ function App() {
         <div className="current-player-hand">
             <CardHand
               Cards={
-                hands[playerId]?.cards?.map((card) => ({
+                localHandOrder.map((card) => ({
                   deckType,
                   faceUp: true,
                   value:
                     "rank" in card && "suit" in card
                       ? `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}`
                       : `${card.color.toLowerCase()}_joker`,
-                })) || []
+                }))
               }
               deckType={deckType}
               faceUp={true}
               onCardClick={handleCardClick}
               selectedCardValue={selectedCard}
+              onReorder={(newCardProps) => {
+                // Convert CardProps[] back to Card[] for localHandOrder
+                const reorderedCards = newCardProps.map((cardProps) => {
+                  return localHandOrder.find((card) => {
+                    if ("rank" in card && "suit" in card) {
+                      return `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}` === cardProps.value;
+                    } else {
+                      return `${card.color.toLowerCase()}_joker` === cardProps.value;
+                    }
+                  })!;
+                });
+                
+                // Update local hand order to persist the reordering
+                setLocalHandOrder(reorderedCards);
+                console.log('Cards reordered and persisted:', reorderedCards);
+              }}
             />
             <div className={`player-username ${playerTeams[playerId]}`}>{playerId}</div>
             {lastAsk?.from === playerId && (

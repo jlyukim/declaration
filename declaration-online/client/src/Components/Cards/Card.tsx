@@ -24,7 +24,10 @@ export function Card({ value,  deckType, faceUp, onCardClick, isSelected, classN
     const cardDir = `/Decks/${deckType}/${value}.svg`;
     const faceDownCardDir = `/Decks/cardback.png`;
 
-    const handleClick = () => {
+    const handleClick = (e: React.MouseEvent) => {
+        // Prevent the click from interfering with drag operations
+        e.stopPropagation();
+        
         if (faceUp) {
             console.log(`Card clicked: ${value}`)
         } else {
@@ -42,10 +45,24 @@ export function Card({ value,  deckType, faceUp, onCardClick, isSelected, classN
         <div>
             <button 
                 className={`btn selected-color-${colorIndex} ${isSelected ? 'selected' : ''} ${className || ""}`}
-                onClick={handleClick}> 
+                onClick={handleClick}
+                onMouseDown={(e) => {
+                    // Prevent immediate drag activation on mouse down
+                    e.stopPropagation();
+                }}
+                onDragStart={(e) => {
+                    // Prevent browser's default image drag behavior
+                    e.preventDefault();
+                }}
+            > 
                 <img 
                     className={`card-img ${faceUp ? '' : 'card-face-down'}`}
                     src= {faceUp ? cardDir : faceDownCardDir}
+                    draggable={false}
+                    onDragStart={(e) => {
+                        // Prevent browser's default image drag behavior
+                        e.preventDefault();
+                    }}
                 />
             </button>
         </div>
