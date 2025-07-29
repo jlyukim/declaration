@@ -9,19 +9,12 @@ interface GridProps {
     selectedOverlayCard: string | null;
     setSelectedOverlayCard: (card: string | null) => void;
     cardCycle: boolean;
+    colorIndices: number[];
+    updateColorIndex: (idx: number) => void;
 }
 
-function CardGrid({ Set , deckType, selectedOverlayCard, setSelectedOverlayCard, cardCycle}: GridProps) {
+function CardGrid({ Set , deckType, selectedOverlayCard, setSelectedOverlayCard, cardCycle, colorIndices, updateColorIndex}: GridProps) {
   const cards = sets.get(Set) ?? [];
-  const [colorIndices, setColorIndices] = React.useState<number[]>(Array(cards.length).fill(0));
-
-  function updateColorIndex(idx: number) {
-    if (!cardCycle) return; // Only cycle colors if cardCycle is true
-
-    setColorIndices(prev =>
-      prev.map((val, i) => i === idx ? (val < 3 ? val + 1 : 0) : val)
-    );
-  }
 
   return (
     <div className="card-hand-container"

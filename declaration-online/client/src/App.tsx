@@ -241,6 +241,8 @@ function App() {
             deckType={deckType}
             selectedOverlayCard={selectedOverlayCard}
             setSelectedOverlayCard={setSelectedOverlayCard}
+            playerHand={playerHand}
+            // backPlayerHands={backendCards}
           />
           <OpponentHand
             playerId={sidePlayers[1]}
@@ -303,6 +305,8 @@ function App() {
             selectedOverlayCard={selectedOverlayCard}
             setSelectedOverlayCard={setSelectedOverlayCard}
             cardCycle={false}
+            colorIndices={[]} // No cycling in this grid
+            updateColorIndex={() => {}}
         />
 
         {selectedOverlayCard ? (
