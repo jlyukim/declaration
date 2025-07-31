@@ -70,19 +70,34 @@ wss.on("connection", (socket) => {
   socket.on("message", (data) => {
     const msg = JSON.parse(data.toString()) as WSMessage;
 
-    // ------------------- ASK + RESPONSE LOGIC -------------------
-    if (msg.type === "ask") {
+    // ------------------- LISTENED MSG LOGIC -------------------
+    switch (msg.type) {
+      case "ask":
+        const result = game.handleAsk(msg.playerId, msg.targetPlayerId, msg.card);
+        if (result) {
+          broadcast({
+            type: "ask_result",
+            playerId: msg.playerId,
+            targetPlayerId: msg.targetPlayerId,
+            card: msg.card,
+            ...result,
+          });
+        }
+        break;
 
-      const result = game.handleAsk(msg.playerId, msg.targetPlayerId, msg.card);
-      if (result) {
-        broadcast({
-          type: "ask_result",
-          playerId: msg.playerId,
-          targetPlayerId: msg.targetPlayerId,
-          card: msg.card,
-          ...result,
-        });
-      }
+      case "declareCheck":
+        const check = game.handleDeclareCheck(msg.targetPlayerId, msg.card);
+        console.log("Received declareCheck for player:", msg.targetPlayerId, "with card:", msg.card, "Result:", check.correctCheck);
+        if (!check.correctCheck) {
+          broadcast({
+            type: "declareCheck_result",
+            targetPlayerId: msg.targetPlayerId,
+            card: msg.card,
+            check,
+          });
+          console.log("Sending declareCheck_result Fail");
+        }
+        break;
     }
   });
 
@@ -93,6 +108,7 @@ wss.on("connection", (socket) => {
 
 type WSMessage =
   | { type: "ask"; playerId: string; targetPlayerId: string; card: string }
+  | { type: "declareCheck"; targetPlayerId: string; card: string }
   | { type: "message"; text: string };
 
 // Broadcast to all connected clients

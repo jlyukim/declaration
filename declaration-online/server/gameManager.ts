@@ -88,4 +88,47 @@ export class GameManager {
             message: `${targetId} does not have ${cardName}`
         };
     }
+
+    // ------------------- DECLARE LOGIC -------------------
+    // This function handles the declaration logic when a player declares a card they believe another player has
+    // Note: Possible improvements could include checking all declared cards in the target player's hand
+    handleDeclareCheck(targetId: PlayerID, cardName: string): {
+        success: boolean;
+        correctCheck: boolean;
+        message: string;
+    } {
+        const card = parseCardName(cardName);
+        
+        if (!card) {
+            return {
+                success: false,
+                correctCheck: false,
+                message: "Declaration Error: No card received",
+            };
+        }
+
+        const targetHand = this.hands[targetId];
+        const targetIndex = targetHand.findIndex(
+            (c) => JSON.stringify(c) === JSON.stringify(card)
+        );
+
+        // Target player has card - successful declaration
+        if (targetIndex !== -1) {
+
+            // Logic needed to send back info of successful check?
+
+            return {
+                success: true,
+                correctCheck: true,
+                message: `${targetId} does have ${cardName}`
+            };
+        }
+
+        // Target player didn't have card
+        return {
+            success: true,
+            correctCheck: false,
+            message: `${targetId} does not have ${cardName}`
+        };
+    }
 }

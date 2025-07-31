@@ -13,10 +13,12 @@ interface DeclareProps {
   selectedOverlayCard: string | null;
   setSelectedOverlayCard: (card: string | null) => void;
   playerHand: Card[];
-  // backPlayerHands: Card[][];
+  handleDeclareCheck: (targetPlayerId: string, card: string) => void;
+  listenDeclareCheck: boolean;
+  teamPlayerIds: string[];
 }
 
-export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand }: DeclareProps) {
+export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck, listenDeclareCheck, teamPlayerIds }: DeclareProps) {
   const [showGrid, setShowDeclareGrid] = useState(false);
   const [declareSetStr, setDeclareSetStr] = useState("SetOfSets");
   const [cardCycle, setCardCycle] = useState(false);
@@ -68,20 +70,23 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
       
       setSelectedOverlayCard(null);
     } else {
+      if (colorIndices.includes(0)) {
+        alert("Please assign all cards a color before confirming.");
+        return;
+      }
       for (let idx = 0; idx < colorIndices.length; idx++) {
         const color = colorIndices[idx];
         switch (color) {
-          case 0:
-            alert("All cards must have a player assigned to them");
-            break;
           case 1:
             declarationSuccess = checkForOwnCard(sets.get(declareSetStr)?.[idx] ?? "");
             break;
           case 2:
-            // Backend logic for color index 2
+            handleDeclareCheck(teamPlayerIds[1], sets.get(declareSetStr)?.[idx] ?? "");
+            declarationSuccess = listenDeclareCheck
             break;
           case 3:
-            // Backend logic for color index 3
+            handleDeclareCheck(teamPlayerIds[0], sets.get(declareSetStr)?.[idx] ?? "");
+            declarationSuccess = listenDeclareCheck
             break;
           default:
             console.log("Error color index is valid:", color);
@@ -98,11 +103,11 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
       // TODO: Add logic to take cards from people's hands
       // TODO: Add logic to make declaration piles
 
-      setShowDeclareGrid(false);
-      setDeclareSetStr("SetOfSets");
-      setCardCycle(false);
-      setSelectedOverlayCard(null);
-      setColorIndices(Array(6).fill(0)); // Reset color indices
+      // setShowDeclareGrid(false);
+      // setDeclareSetStr("SetOfSets");
+      // setCardCycle(false);
+      // setSelectedOverlayCard(null);
+      // setColorIndices(Array(6).fill(0)); // Reset color indices
       
       if (declarationSuccess) {
         alert("Declaration successful!");

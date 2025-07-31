@@ -112,7 +112,6 @@ function App() {
   const [selectedTargetId, setSelectedTargetId] = useState<string | null>(null); // keep track of who is being asked
   const playerHand = hands?.[playerId]?.cards ?? []; // Keep track of player hand; this needs to get updated whenever player hand changes
   
-
   const handleAsk = () => {
     if (!selectedOverlayCard || !selectedTargetId || !playerId) {
       alert("Select a player and a card first.");
@@ -155,21 +154,51 @@ function App() {
     setSelectedCardValue(null);
   };
 
+  // ------------------- DECLARE LOGIC -------------------
+  const [declareCheckSuccess, setDeclareCheckSuccess] = useState<boolean>(true);
+
+  const handleDeclareCheck = (targetId: string, card: string) => {
+    setDeclareCheckSuccess(true);
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(
+        JSON.stringify({
+          type: "declareCheck",
+          targetPlayerId: targetId,
+          card: card,
+        })
+      );
+      console.log("Declare check sent for player:", targetId, "with card:", card);
+    } else {
+      alert("WebSocket is not connected.");
+    }
+  }
+
+
   useEffect(() => {
     if (!socketRef.current) return;
     const socket = socketRef.current;
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === "ask_result") {
-        // Handle the result (show a message, update UI, etc.)
-        console.log("Ask result:", data);
-        // Optionally, show a notification or update state here
+      switch (data.type) {
+        case "ask_result":
+          // Handle the result (show a message, update UI, etc.)
+          console.log("Ask result:", data);
+          break;
+        case "declareCheck_result":
+          // Handle the declare check result
+          console.log("Declare check result:", data);
+          if (!data.check.correctlCheck) {
+            setDeclareCheckSuccess(false);
+          }
+          break;          
+        default:
+          // Optionally, show a notification or update state here
+          break;
       }
     };
   }, [/* dependencies if needed */]);
 
   //Fetch ask card from backend
-
 
   // Fetch all hands from backend
   useEffect(() => {
@@ -242,7 +271,9 @@ function App() {
             selectedOverlayCard={selectedOverlayCard}
             setSelectedOverlayCard={setSelectedOverlayCard}
             playerHand={playerHand}
-            // backPlayerHands={backendCards}
+            handleDeclareCheck={handleDeclareCheck}
+            listenDeclareCheck={declareCheckSuccess}
+            teamPlayerIds={[topPlayers[0], topPlayers[2]]}
           />
           <OpponentHand
             playerId={sidePlayers[1]}
