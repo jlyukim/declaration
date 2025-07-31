@@ -155,19 +155,22 @@ function App() {
   };
 
   // ------------------- DECLARE LOGIC -------------------
-  const [declareCheckSuccess, setDeclareCheckSuccess] = useState<boolean>(true);
+  const [localDeclareSuccess, setLocalDeclareSuccess] = useState<boolean>(true);
 
-  const handleDeclareCheck = (targetId: string, card: string) => {
-    setDeclareCheckSuccess(true);
+  const handleDeclareCheck = (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(
         JSON.stringify({
           type: "declareCheck",
-          targetPlayerId: targetId,
-          card: card,
+          targetIds: [topPlayers[2], topPlayers[0]], // Teammates ordered left then right
+          cardsLeftPlayerCheck: cardsLeftPlayerCheck,
+          cardsRightPlayerCheck: cardsRightPlayerCheck,
         })
       );
-      console.log("Declare check sent for player:", targetId, "with card:", card);
+      console.log("Declare check sent:", {
+        cardsLeftPlayerCheck,
+        cardsRightPlayerCheck,
+      });
     } else {
       alert("WebSocket is not connected.");
     }
@@ -187,9 +190,13 @@ function App() {
         case "declareCheck_result":
           // Handle the declare check result
           console.log("Declare check result:", data);
-          if (!data.check.correctlCheck) {
-            setDeclareCheckSuccess(false);
+          if (data.check.correctCheck && localDeclareSuccess) {
+            alert(`✅ Declaration successful! ${data.check.message}`);
+          } else {
+            alert(`❌ Declaration failed! ${data.check.message}`);
           }
+          // Update states off of finished declaration
+          setLocalDeclareSuccess(true);
           break;          
         default:
           // Optionally, show a notification or update state here
@@ -272,8 +279,7 @@ function App() {
             setSelectedOverlayCard={setSelectedOverlayCard}
             playerHand={playerHand}
             handleDeclareCheck={handleDeclareCheck}
-            listenDeclareCheck={declareCheckSuccess}
-            teamPlayerIds={[topPlayers[0], topPlayers[2]]}
+            updateLocalDeclareSuccess={setLocalDeclareSuccess}
           />
           <OpponentHand
             playerId={sidePlayers[1]}

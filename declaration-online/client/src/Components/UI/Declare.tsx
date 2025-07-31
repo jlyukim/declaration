@@ -13,18 +13,19 @@ interface DeclareProps {
   selectedOverlayCard: string | null;
   setSelectedOverlayCard: (card: string | null) => void;
   playerHand: Card[];
-  handleDeclareCheck: (targetPlayerId: string, card: string) => void;
-  listenDeclareCheck: boolean;
-  teamPlayerIds: string[];
+  handleDeclareCheck: (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]) => void;
+  updateLocalDeclareSuccess: (success: boolean) => void;
 }
 
-export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck, listenDeclareCheck, teamPlayerIds }: DeclareProps) {
+export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck, updateLocalDeclareSuccess }: DeclareProps) {
   const [showGrid, setShowDeclareGrid] = useState(false);
   const [declareSetStr, setDeclareSetStr] = useState("SetOfSets");
   const [cardCycle, setCardCycle] = useState(false);
   const [colorIndices, setColorIndices] = React.useState<number[]>(Array(6).fill(0));
 
   var declarationSuccess = true;
+  var toBeCheckedLeftTeammate: string[] = [];
+  var toBeCheckedRightTeammate: string[] = [];
 
   useEffect(() => {
                 console.log("declareSetStr updated:", declareSetStr);
@@ -80,13 +81,11 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
           case 1:
             declarationSuccess = checkForOwnCard(sets.get(declareSetStr)?.[idx] ?? "");
             break;
-          case 2:
-            handleDeclareCheck(teamPlayerIds[1], sets.get(declareSetStr)?.[idx] ?? "");
-            declarationSuccess = listenDeclareCheck
+          case 2: 
+            toBeCheckedLeftTeammate.push(sets.get(declareSetStr)?.[idx] ?? "");
             break;
-          case 3:
-            handleDeclareCheck(teamPlayerIds[0], sets.get(declareSetStr)?.[idx] ?? "");
-            declarationSuccess = listenDeclareCheck
+          case 3: 
+            toBeCheckedRightTeammate.push(sets.get(declareSetStr)?.[idx] ?? "");
             break;
           default:
             console.log("Error color index is valid:", color);
@@ -96,24 +95,24 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
 
         if (!declarationSuccess) {
           alert(sets.get(declareSetStr)?.[idx] + " was not assigned correctly");
+          updateLocalDeclareSuccess(false);
           break;
         }
       }
 
+      // Send check for other players hands
+      handleDeclareCheck(toBeCheckedLeftTeammate, toBeCheckedRightTeammate);
+
       // TODO: Add logic to take cards from people's hands
       // TODO: Add logic to make declaration piles
-
-      // setShowDeclareGrid(false);
-      // setDeclareSetStr("SetOfSets");
-      // setCardCycle(false);
-      // setSelectedOverlayCard(null);
-      // setColorIndices(Array(6).fill(0)); // Reset color indices
       
-      if (declarationSuccess) {
-        alert("Declaration successful!");
-      } else {
-        console.log("Declaration failed");
-      }
+      setShowDeclareGrid(false);
+      setDeclareSetStr("SetOfSets");
+      setCardCycle(false);
+      setSelectedOverlayCard(null);
+      setColorIndices(Array(6).fill(0)); // Reset color indices
+      
+      // Declaration success handled in App.tsx
     }
   }
 

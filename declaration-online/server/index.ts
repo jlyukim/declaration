@@ -86,17 +86,13 @@ wss.on("connection", (socket) => {
         break;
 
       case "declareCheck":
-        const check = game.handleDeclareCheck(msg.targetPlayerId, msg.card);
-        console.log("Received declareCheck for player:", msg.targetPlayerId, "with card:", msg.card, "Result:", check.correctCheck);
-        if (!check.correctCheck) {
-          broadcast({
-            type: "declareCheck_result",
-            targetPlayerId: msg.targetPlayerId,
-            card: msg.card,
-            check,
-          });
-          console.log("Sending declareCheck_result Fail");
-        }
+        const check = game.handleDeclareCheck(msg.targetIds, msg.cardsLeftPlayerCheck, msg.cardsRightPlayerCheck);
+        console.log("Received declareCheck for players:", msg, "Result:", check.correctCheck);
+        broadcast({
+          type: "declareCheck_result",
+          check: check,
+        });
+        console.log("Sending declareCheck_result");
         break;
     }
   });
@@ -108,7 +104,7 @@ wss.on("connection", (socket) => {
 
 type WSMessage =
   | { type: "ask"; playerId: string; targetPlayerId: string; card: string }
-  | { type: "declareCheck"; targetPlayerId: string; card: string }
+  | { type: "declareCheck"; targetIds: string[], cardsLeftPlayerCheck: string[]; cardsRightPlayerCheck: string[] }
   | { type: "message"; text: string };
 
 // Broadcast to all connected clients

@@ -89,46 +89,52 @@ export class GameManager {
         };
     }
 
-    // ------------------- DECLARE LOGIC -------------------
+    // ------------------- DECLARE CHECK HELPER -------------------
+    checkforCardInHand(targetId: PlayerID, cardName: string): number {
+        const card = parseCardName(cardName);
+
+        if (!card) {
+            throw new Error("Invalid card name");
+        }
+
+        const targetHand = this.hands[targetId]; // Assuming left player is at index 0
+        return targetHand.findIndex(
+            (c) => JSON.stringify(c) === JSON.stringify(card)
+        );
+    }
+    // ------------------- DECLARE CHECK LOGIC -------------------
     // This function handles the declaration logic when a player declares a card they believe another player has
     // Note: Possible improvements could include checking all declared cards in the target player's hand
-    handleDeclareCheck(targetId: PlayerID, cardName: string): {
+    handleDeclareCheck(targetIds: string[], cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]): {
         success: boolean;
         correctCheck: boolean;
         message: string;
     } {
-        const card = parseCardName(cardName);
-        
-        if (!card) {
-            return {
-                success: false,
-                correctCheck: false,
-                message: "Declaration Error: No card received",
-            };
-        }
-
-        const targetHand = this.hands[targetId];
-        const targetIndex = targetHand.findIndex(
-            (c) => JSON.stringify(c) === JSON.stringify(card)
-        );
-
-        // Target player has card - successful declaration
-        if (targetIndex !== -1) {
-
-            // Logic needed to send back info of successful check?
-
+        for (const cardName of cardsLeftPlayerCheck) {
+        if (this.checkforCardInHand(targetIds[0], cardName) === -1) {
             return {
                 success: true,
-                correctCheck: true,
-                message: `${targetId} does have ${cardName}`
+                correctCheck: false,
+                message: `${targetIds[0]} does not have ${cardName}`
             };
         }
+        }
 
-        // Target player didn't have card
+        for (const cardName of cardsRightPlayerCheck) {
+        if (this.checkforCardInHand(targetIds[1], cardName) === -1) {
+            return {
+                success: true,
+                correctCheck: false,
+                message: `${targetIds[1]} does not have ${cardName}`
+            };
+        }
+        }
+
+        // Target players all have card
         return {
             success: true,
-            correctCheck: false,
-            message: `${targetId} does not have ${cardName}`
+            correctCheck: true,
+            message: `${targetIds} have all declared cards`
         };
     }
 }
