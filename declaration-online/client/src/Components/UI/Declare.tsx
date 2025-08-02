@@ -14,10 +14,9 @@ interface DeclareProps {
   setSelectedOverlayCard: (card: string | null) => void;
   playerHand: Card[];
   handleDeclareCheck: (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]) => void;
-  updateLocalDeclareSuccess: (success: boolean) => void;
 }
 
-export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck, updateLocalDeclareSuccess }: DeclareProps) {
+export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck }: DeclareProps) {
   const [showGrid, setShowDeclareGrid] = useState(false);
   const [declareSetStr, setDeclareSetStr] = useState("SetOfSets");
   const [cardCycle, setCardCycle] = useState(false);
@@ -95,13 +94,15 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
 
         if (!declarationSuccess) {
           alert(sets.get(declareSetStr)?.[idx] + " was not assigned correctly");
-          updateLocalDeclareSuccess(false);
+          alert("Declaration failed");
           break;
         }
       }
 
-      // Send check for other players hands
-      handleDeclareCheck(toBeCheckedLeftTeammate, toBeCheckedRightTeammate);
+      if (declarationSuccess) {
+        // Send check for other players hands
+        handleDeclareCheck(toBeCheckedLeftTeammate, toBeCheckedRightTeammate);
+      }
 
       // TODO: Add logic to take cards from people's hands
       // TODO: Add logic to make declaration piles

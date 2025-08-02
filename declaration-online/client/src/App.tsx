@@ -155,8 +155,6 @@ function App() {
   };
 
   // ------------------- DECLARE LOGIC -------------------
-  const [localDeclareSuccess, setLocalDeclareSuccess] = useState<boolean>(true);
-
   const handleDeclareCheck = (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(
@@ -190,13 +188,12 @@ function App() {
         case "declareCheck_result":
           // Handle the declare check result
           console.log("Declare check result:", data);
-          if (data.check.correctCheck && localDeclareSuccess) {
+          if (data.check.correctCheck) {
             alert(`✅ Declaration successful! ${data.check.message}`);
           } else {
             alert(`❌ Declaration failed! ${data.check.message}`);
           }
           // Update states off of finished declaration
-          setLocalDeclareSuccess(true);
           break;          
         default:
           // Optionally, show a notification or update state here
@@ -279,7 +276,6 @@ function App() {
             setSelectedOverlayCard={setSelectedOverlayCard}
             playerHand={playerHand}
             handleDeclareCheck={handleDeclareCheck}
-            updateLocalDeclareSuccess={setLocalDeclareSuccess}
           />
           <OpponentHand
             playerId={sidePlayers[1]}

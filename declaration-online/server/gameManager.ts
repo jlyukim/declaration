@@ -1,23 +1,24 @@
 // server/gameManager.ts
 
-import { Deck, Card, Rank } from "./deck";
-// import { parseCardName } from "../client/src/Types/Utils"
+import { Deck, Card, Suit, Rank } from "./deck";
 
 type PlayerID = string;
 
-var parseCardName: any; // Use 'any' or define a type for the imported module's exports
+function parseCardName(cardName: string): Card | null {
+  if (cardName === "black_joker") return { type: "Joker", color: "Black" };
+  if (cardName === "red_joker") return { type: "Joker", color: "Red" };
 
-async function loadUtils() {
-  const Utils = await import("../client/src/Types/Utils");
-  parseCardName = Utils.parseCardName;
+  const [rankStr, suit] = cardName.split("_of_");
+
+  const rank = rankStr; // Keep as string to match deck format
+
+  if (typeof suit !== "string") return null;
+
+  return {
+    suit: suit as Suit,
+    rank: rank as Rank
+  };
 }
-loadUtils();
-
-// (async () => {
-//     // Dynamic import
-//     const Utils = await import("../client/src/Types/Utils");
-//     const parseCardName = Utils.parseCardName; // Access the specific named export
-//   })();
 
 export class GameManager {
     deck = new Deck();

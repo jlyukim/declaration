@@ -28,11 +28,11 @@ function OpponentHand({
   askState
 }: OpponentHandProps) {
   const cardsToShow = Math.min(cardCount, 4);
-  const cardBacks = new Array(cardsToShow).fill({
-    value: "cardback",
-    deckType: "RegularCards",
-    faceUp: false,
-  });
+  const cardBacks = Array.from({ length: cardsToShow }, (_, i) => ({
+  value: `cardback-${i}`,
+  deckType: "RegularCards",
+  faceUp: false,
+}));
 
   const handleUsernameClick = () => {
     if (!isOpponent) return; // Only allow selection for opponents
