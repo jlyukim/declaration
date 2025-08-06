@@ -34,6 +34,7 @@ interface HandProps {
     onCardClick?: (value: string) => void;
     selectedCardValue?: string | null;
     onReorder?: (newCards: CardProps[]) => void; // Callback for when cards are reordered
+    decPile?: boolean;
 }
 
 /**
@@ -46,7 +47,8 @@ function SortableCardItem({
   deckType, 
   faceUp, 
   onCardClick, 
-  selectedCardValue 
+  selectedCardValue,
+  decPile
 }: {
   card: CardProps;
   index: number;
@@ -54,6 +56,7 @@ function SortableCardItem({
   faceUp: boolean;
   onCardClick?: (value: string) => void;
   selectedCardValue?: string | null;
+  decPile?: boolean;
 }) {
   // useSortable hook provides all the drag-and-drop functionality for this item
   const {
@@ -69,7 +72,7 @@ function SortableCardItem({
   const style = {
     transform: CSS.Transform.toString(transform), // Convert transform to CSS string
     transition, // Apply smooth transitions
-    marginLeft: index === 0 ? "0px" : "-60px", // Overlap cards except first
+    marginLeft: index === 0 ? "0px" : decPile ? "-100px" : "-60px", // Overlap cards except first
     zIndex: isDragging ? 1000 : index, // Dragged cards appear on top
     opacity: isDragging ? 0 : 1, // Make original card invisible when dragging
   };
@@ -134,7 +137,7 @@ function DragOverlayCard({
  * Main CardHand component with drag-and-drop functionality
  * Uses dnd-kit to enable smooth reordering of overlapping cards
  */
-function CardHand({ Cards, deckType, faceUp, onCardClick, selectedCardValue, onReorder }: HandProps) {
+function CardHand({ Cards, deckType, faceUp, onCardClick, selectedCardValue, onReorder, decPile }: HandProps) {
   // Track which card is currently being dragged
   const [activeId, setActiveId] = useState<string | null>(null);
   
@@ -206,6 +209,7 @@ function CardHand({ Cards, deckType, faceUp, onCardClick, selectedCardValue, onR
               faceUp={faceUp}
               onCardClick={onCardClick}
               selectedCardValue={selectedCardValue}
+              decPile={decPile}
             />
           ))}
         </SortableContext>

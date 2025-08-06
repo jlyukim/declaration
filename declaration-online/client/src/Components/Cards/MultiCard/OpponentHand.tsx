@@ -54,7 +54,7 @@ function OpponentHand({
       >
         <p className="username">{playerId}</p>
       </div>
-      <CardHand Cards={cardBacks} deckType="RegularCards" faceUp={false} />
+      <CardHand Cards={cardBacks} deckType="RegularCards" faceUp={false}/>
       {cardCount > 4 && <div className="card-count-label">{cardCount}</div>}
       {askState && askState.from === playerId && (
       // {/* {askState &&( */}

@@ -1,4 +1,5 @@
 .declare-button {
+    position: fixed;
     all: unset;
     border: none;
     border-radius: 50%;

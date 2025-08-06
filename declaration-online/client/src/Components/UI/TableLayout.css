@@ -51,6 +51,18 @@
   position: relative;
 }
 
+.declaration-pile-red {
+  position: fixed;
+  left: 70%;
+  top: 40%;
+}
+
+.declaration-pile-blue {
+  position: fixed;
+  left: 20%;
+  top: 40%;
+}
+
 /* Rotation for side players */
 .opponent-left {
   transform: rotate(90deg);
@@ -78,6 +90,17 @@
   pointer-events: none;
 }
 
+.count-dec-pile {
+  /* position: fixed; */
+  top: 0.5rem;
+  right: -1rem;
+  font-size: 5rem;
+  background-color: #6A6A6A;
+  opacity: 95%;
+  padding: 30px;
+  border-radius: 10%;
+}
+
 /* initially show up upside down */
 .top-players .card-count-label{
   transform: rotate(180deg);
@@ -102,6 +125,12 @@
   /* pointer-events: none; */
   user-select: none;
   text-align: center;
+}
+
+.dec-label-box {
+  top: 13rem;
+  left: 1rem;
+  width: 10rem;
 }
 
 .username-box.selected {

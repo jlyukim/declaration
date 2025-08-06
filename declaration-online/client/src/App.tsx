@@ -15,6 +15,7 @@ import "./Components/UI/Overlay.css";
 import "./Components/Cards/Card.css";
 import "./App.css";
 import { cards } from "./Components/Cards/Card";
+import DeclarationPile from "./Components/UI/DeclarationPile";
 
 function App() {
   const socketRef = useRef<WebSocket | null>(null);
@@ -155,6 +156,10 @@ function App() {
   };
 
   // ------------------- DECLARE LOGIC -------------------
+  const [decCountRed, setDecCountRed] = useState<number>(0); 
+  const [decSetsRed, setDecSetsRed] = useState<string[]>(); 
+  const [decCountBlue, setDecCountBlue] = useState<number>(0); 
+  const [decSetsBlue, setDecSetsBlue] = useState<string[]>(); 
   const handleDeclareCheck = (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(
@@ -269,13 +274,22 @@ function App() {
             setSelectedTargetId={setSelectedTargetId}
             isOpponent={playerTeams[sidePlayers[0]] !== playerTeams[playerId]}
           />
-          {/* <h1 className="title">declaration</h1> */}
+          <DeclarationPile
+            decCount={decCountRed}
+            decSets={decSetsRed}
+            teamColor="blue"
+          />
           <Declare
             deckType={deckType}
             selectedOverlayCard={selectedOverlayCard}
             setSelectedOverlayCard={setSelectedOverlayCard}
             playerHand={playerHand}
             handleDeclareCheck={handleDeclareCheck}
+          />
+          <DeclarationPile
+            decCount={decCountBlue}
+            decSets={decSetsBlue}
+            teamColor="red"
           />
           <OpponentHand
             playerId={sidePlayers[1]}
@@ -290,37 +304,33 @@ function App() {
 
         <div className="current-player-hand">
             <CardHand
-              Cards={
-                localHandOrder.map((card) => ({
-                  deckType,
-                  faceUp: true,
-                  value:
-                    "rank" in card && "suit" in card
-                      ? `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}`
-                      : `${card.color.toLowerCase()}_joker`,
-                }))
-              }
-              deckType={deckType}
-              faceUp={true}
-              onCardClick={handleCardClick}
-              selectedCardValue={selectedCard}
-              onReorder={(newCardProps) => {
-                // Convert CardProps[] back to Card[] for localHandOrder
-                const reorderedCards = newCardProps.map((cardProps) => {
-                  return localHandOrder.find((card) => {
-                    if ("rank" in card && "suit" in card) {
-                      return `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}` === cardProps.value;
-                    } else {
-                      return `${card.color.toLowerCase()}_joker` === cardProps.value;
-                    }
-                  })!;
-                });
-                
-                // Update local hand order to persist the reordering
-                setLocalHandOrder(reorderedCards);
-                console.log('Cards reordered and persisted:', reorderedCards);
-              }}
-            />
+            Cards={localHandOrder.map((card) => ({
+              deckType,
+              faceUp: true,
+              value: "rank" in card && "suit" in card
+                ? `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}`
+                : `${card.color.toLowerCase()}_joker`,
+            }))}
+            deckType={deckType}
+            faceUp={true}
+            onCardClick={handleCardClick}
+            selectedCardValue={selectedCard}
+            onReorder={(newCardProps) => {
+              // Convert CardProps[] back to Card[] for localHandOrder
+              const reorderedCards = newCardProps.map((cardProps) => {
+                return localHandOrder.find((card) => {
+                  if ("rank" in card && "suit" in card) {
+                    return `${card.rank.toLowerCase()}_of_${card.suit.toLowerCase()}` === cardProps.value;
+                  } else {
+                    return `${card.color.toLowerCase()}_joker` === cardProps.value;
+                  }
+                })!;
+              });
+
+              // Update local hand order to persist the reordering
+              setLocalHandOrder(reorderedCards);
+              console.log('Cards reordered and persisted:', reorderedCards);
+            } }/>
             <div className={`player-username ${playerTeams[playerId]}`}>{playerId}</div>
             {lastAsk?.from === playerId && (
               <div className="speech-bubble ask">
