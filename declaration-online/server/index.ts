@@ -51,7 +51,10 @@ app.get("/api/hands/:currentPlayerId", (req, res) => {
   res.json(allHands);
 });
 
-
+// REST endpoint: Get declarations
+app.get("/api/declarations", (req, res) => {
+  res.json({ declarations: game.getDeclarations() });
+});
 
 
 // ------------------- WEBSOCKET SERVER -------------------

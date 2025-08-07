@@ -13,9 +13,10 @@ interface DeclareProps {
   setSelectedOverlayCard: (card: string | null) => void;
   playerHand: Card[];
   handleDeclareCheck: (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[], set: string[]) => void;
+  prevDeclarations: string[];
 }
 
-export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck }: DeclareProps) {
+export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck, prevDeclarations }: DeclareProps) {
   const [showGrid, setShowDeclareGrid] = useState(false);
   const [declareSetStr, setDeclareSetStr] = useState("SetOfSets");
   const [cardCycle, setCardCycle] = useState(false);
@@ -59,13 +60,13 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
       console.log("Card confirmed:", selectedOverlayCard);
       // Reset the selected card after confirmation
       
-      if (selectedOverlayCard) {
+      if (selectedOverlayCard && !prevDeclarations.includes(selectedOverlayCard)) {        
           setDeclareSetStr(getSetStrFromCard(selectedOverlayCard));
           setCardCycle(true);
 
           console.log("Selected card set");
       } else {
-          console.log("No card selected for confirmation.");
+          alert("This set was already declared");
       }
       
       setSelectedOverlayCard(null);

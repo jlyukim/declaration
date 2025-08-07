@@ -1,10 +1,4 @@
-// server/gameManager.ts
-
 import { Deck, Card, Suit, Rank } from "./deck";
-// import { sets, getSetFromCard, getSetCardFromCard } from "./CopiedClientFiles/sets";
-// import { players } from "./index";
-
-const players = ["player1", "player2", "player3", "player4", "player5", "player6"];
 
 type PlayerID = string;
 
@@ -28,6 +22,8 @@ export class GameManager {
     deck = new Deck();
     hands: Record<PlayerID, Card[]> = {};
     players: PlayerID[] = [];
+    blueDeclarations: string[] = [];
+    redDeclarations: string[] = [];
 
     constructor(playerIds: PlayerID[]) {
         this.players = playerIds;
@@ -47,6 +43,13 @@ export class GameManager {
 
     getHand(id: PlayerID): Card[] {
         return this.hands[id] ?? [];
+    }
+
+    getDeclarations(): {blueDeclarations: string[], redDeclarations: string[]} {
+        return {
+            blueDeclarations: this.blueDeclarations,
+            redDeclarations: this.redDeclarations
+        };
     }
 
     
@@ -109,7 +112,7 @@ export class GameManager {
     }
     // ------------------- DECLARE CHECK LOGIC -------------------
     removeSetFromAllHands(set: string[]): void {
-        for (const player of players) {
+        for (const player of this.players) {
             for (const cardName of set) {
                 const cardIndex = this.checkforCardInHand(player, cardName);
                 if (cardIndex !== -1) {
@@ -138,11 +141,12 @@ export class GameManager {
         message: string;
         setCard: string;
     } {
-        // console.log("Set card for declaration check:", setCard);
-        // const setCard = cardsLeftPlayerCheck.length > 0 ? getSetCardFromCard(cardsLeftPlayerCheck[0]) : getSetCardFromCard(cardsRightPlayerCheck[0]);
-        // const set = getSetFromCard(setCard, sets);
+        const targetOneIndex = this.players.findIndex((c) => JSON.stringify(c) === JSON.stringify(targetIds[0]));
+        const targetTwoIndex = this.players.findIndex((c) => JSON.stringify(c) === JSON.stringify(targetIds[1]));
+        console.log("Target player indices:", targetOneIndex, targetTwoIndex);
+        
         const setCard = set[5];
-
+        
         if (!set) {
             return {
                 success: false,
@@ -157,6 +161,8 @@ export class GameManager {
             targetIndex = this.checkforCardInHand(targetIds[0], cardName)
             if (targetIndex === -1) {
                 this.removeSetFromAllHands(set);
+                (targetOneIndex % 2 === 0) ? // Assuming player1 is always blue
+                    this.redDeclarations.push(setCard) : this.blueDeclarations.push(setCard); // Failure scenario
                 return {
                     success: true,
                     correctCheck: false,
@@ -172,6 +178,8 @@ export class GameManager {
             targetIndex = this.checkforCardInHand(targetIds[1], cardName)
             if (targetIndex === -1) {
                 this.removeSetFromAllHands(set);
+                (targetOneIndex % 2 === 0) ? // Assuming player1 is always blue
+                    this.redDeclarations.push(setCard) : this.blueDeclarations.push(setCard); // Failure scenario
                 return {
                     success: true,
                     correctCheck: false,
@@ -184,14 +192,8 @@ export class GameManager {
         }
 
         // Target players all have card
-        const targetOneIndex = players.findIndex(
-            (c) => JSON.stringify(c) === JSON.stringify(targetIds[0])
-        );
-
-        const targetTwoIndex = players.findIndex(
-            (c) => JSON.stringify(c) === JSON.stringify(targetIds[1])
-        );
-        console.log("Target player indices:", targetOneIndex, targetTwoIndex);
+        (targetOneIndex % 2 === 0) ? // Assuming player1 is always blue
+            this.blueDeclarations.push(setCard) : this.redDeclarations.push(setCard); // Success scenario
 
         const maxIndex = Math.max(targetOneIndex, targetTwoIndex);
         const minIndex = Math.min(targetOneIndex, targetTwoIndex);
@@ -200,11 +202,11 @@ export class GameManager {
         console.log("Indexes", maxIndex, minIndex, targetThreeIndex);
         
         set.forEach((cardName) => {
-            if (this.checkforCardInHand(players[targetThreeIndex], cardName) === -1) {
-                throw new Error(`Card ${cardName} not found in ${players[targetThreeIndex]}'s hand`);
+            if (this.checkforCardInHand(this.players[targetThreeIndex], cardName) === -1) {
+                throw new Error(`Card ${cardName} not found in ${this.players[targetThreeIndex]}'s hand`);
             }
-            console.log(`Found ${cardName} at ${this.checkforCardInHand(players[targetThreeIndex], cardName)} in ${players[targetThreeIndex]}'s hand`);
-            this.hands[players[targetThreeIndex]].splice(this.checkforCardInHand(players[targetThreeIndex], cardName), 1);
+            console.log(`Found ${cardName} at ${this.checkforCardInHand(this.players[targetThreeIndex], cardName)} in ${this.players[targetThreeIndex]}'s hand`);
+            this.hands[this.players[targetThreeIndex]].splice(this.checkforCardInHand(this.players[targetThreeIndex], cardName), 1);
         });
 
         return {

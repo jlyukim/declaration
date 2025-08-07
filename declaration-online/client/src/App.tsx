@@ -257,7 +257,36 @@ function App() {
         })
         .catch(console.error);
     }
+
+    function fetchDeclarations() {
+      fetch(`http://localhost:3001/api/declarations`)
+        .then((res) => res.json())
+        .then((data) => {
+          
+          // Sync local hand order with backend data
+          if (data) {
+
+            console.log("Fetched declarations:", data);
+            const decs = data.declarations;
+            // data is two string[] for declarations made on each team
+
+            // Only update local order if backend declaration size is different
+            if (decCountRed !== decs.redDeclarations.length) {
+              setDecCountRed(decs.redDeclarations.length);
+              setDecSetsRed(decs.redDeclarations);
+            }
+            
+            if (decCountBlue !== decs.blueDeclarations.length) {
+              setDecCountBlue(decs.blueDeclarations.length);
+              setDecSetsBlue(decs.blueDeclarations);
+            }
+          }
+        })
+        .catch(console.error);
+    }
+    
     fetchHands();
+    fetchDeclarations();
     const interval = setInterval(fetchHands, 3000);
     return () => clearInterval(interval);
   }, [playerId, localHandOrder.length]); // Include localHandOrder.length to prevent infinite loops
@@ -310,6 +339,7 @@ function App() {
             setSelectedOverlayCard={setSelectedOverlayCard}
             playerHand={playerHand}
             handleDeclareCheck={handleDeclareCheck}
+            prevDeclarations={decSetsBlue.concat(decSetsRed)}
           />
           <DeclarationPile
             decCount={decCountRed}
