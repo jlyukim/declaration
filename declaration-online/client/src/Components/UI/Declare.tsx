@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import CardGrid from "../Cards/MultiCard/CardGrid";
-import { getSetStrFromCard } from '../Cards/Sets';
-import sets from '../Cards/Sets';
+import { sets, getSetStrFromCard } from '../Cards/Sets';
 
 import './Declare.css';
 import React from 'react';
@@ -13,7 +12,7 @@ interface DeclareProps {
   selectedOverlayCard: string | null;
   setSelectedOverlayCard: (card: string | null) => void;
   playerHand: Card[];
-  handleDeclareCheck: (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]) => void;
+  handleDeclareCheck: (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[], set: string[]) => void;
 }
 
 export default function Declare({ deckType, selectedOverlayCard, setSelectedOverlayCard, playerHand, handleDeclareCheck }: DeclareProps) {
@@ -26,10 +25,11 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
   var toBeCheckedLeftTeammate: string[] = [];
   var toBeCheckedRightTeammate: string[] = [];
 
-  useEffect(() => {
-                console.log("declareSetStr updated:", declareSetStr);
-                console.log("cardCycle updated:", cardCycle);
-            }, [declareSetStr, cardCycle]);
+  // For testing 
+  // useEffect(() => {
+  //               console.log("declareSetStr updated:", declareSetStr);
+  //               console.log("cardCycle updated:", cardCycle);
+  //           }, [declareSetStr, cardCycle]);
 
   function updateColorIndex(idx: number) {
     if (!cardCycle) return; // Only cycle colors if cardCycle is true
@@ -52,7 +52,7 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
     setSelectedOverlayCard(null);
     setColorIndices(Array(6).fill(0)); // Reset color indices
   }
-            
+  
   function handleConfirm() {
     if (declareSetStr === "SetOfSets") {
       // Logic to handle confirmation of the selected card
@@ -60,7 +60,7 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
       // Reset the selected card after confirmation
       
       if (selectedOverlayCard) {
-          setDeclareSetStr(getSetStrFromCard(selectedOverlayCard, sets));
+          setDeclareSetStr(getSetStrFromCard(selectedOverlayCard));
           setCardCycle(true);
 
           console.log("Selected card set");
@@ -99,9 +99,12 @@ export default function Declare({ deckType, selectedOverlayCard, setSelectedOver
         }
       }
 
+      const set = sets.get(declareSetStr) || [];
       if (declarationSuccess) {
         // Send check for other players hands
-        handleDeclareCheck(toBeCheckedLeftTeammate, toBeCheckedRightTeammate);
+        handleDeclareCheck(toBeCheckedLeftTeammate, toBeCheckedRightTeammate, set);
+      } else {
+        handleDeclareCheck(set, set, set);
       }
 
       // TODO: Add logic to take cards from people's hands

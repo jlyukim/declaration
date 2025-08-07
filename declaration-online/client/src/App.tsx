@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useMemo } from "react"
-import { initSets, getSetFromCard} from "./Components/Cards/Sets"
+import { initSets, getSetFromCard, getSetCardFromCard} from "./Components/Cards/Sets"
 import { Card } from "./Types/Card";
 import { formatTextStringToSymbol, formatTextObjectToString } from "./Types/Utils";
 
@@ -59,7 +59,6 @@ function App() {
   ];
   const [playerId, setPlayerId] = useState<string>(""); // Dynamically set playerId
   // const [playerId, setPlayerId] = useState("player1"); // Hardcoded player1 for testing purposes
-  
 
   //Set player Id
   useEffect(() => {
@@ -157,10 +156,16 @@ function App() {
 
   // ------------------- DECLARE LOGIC -------------------
   const [decCountRed, setDecCountRed] = useState<number>(0); 
-  const [decSetsRed, setDecSetsRed] = useState<string[]>(); 
+  const [decSetsRed, setDecSetsRed] = useState<string[]>([]); 
   const [decCountBlue, setDecCountBlue] = useState<number>(0); 
-  const [decSetsBlue, setDecSetsBlue] = useState<string[]>(); 
-  const handleDeclareCheck = (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[]) => {
+  const [decSetsBlue, setDecSetsBlue] = useState<string[]>([]); // Initialize with a default set for testing
+
+  useEffect(() => {
+    console.log("Red declarations:", decCountRed, decSetsRed);
+    console.log("Blue declarations:", decCountBlue, decSetsBlue);
+  }, [decCountRed, decSetsRed, decCountBlue, decSetsBlue]);
+
+  const handleDeclareCheck = (cardsLeftPlayerCheck: string[], cardsRightPlayerCheck: string[], set: string[]) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(
         JSON.stringify({
@@ -168,6 +173,7 @@ function App() {
           targetIds: [topPlayers[2], topPlayers[0]], // Teammates ordered left then right
           cardsLeftPlayerCheck: cardsLeftPlayerCheck,
           cardsRightPlayerCheck: cardsRightPlayerCheck,
+          set: set, // Assuming both checks are for the same set
         })
       );
       console.log("Declare check sent:", {
@@ -193,10 +199,29 @@ function App() {
         case "declareCheck_result":
           // Handle the declare check result
           console.log("Declare check result:", data);
+          console.log("Checking player team: ", playerTeams[data.check.message.slice(0, data.check.message.indexOf(","))])
           if (data.check.correctCheck) {
             alert(`✅ Declaration successful! ${data.check.message}`);
+            if (playerTeams[data.check.message.slice(0, data.check.message.indexOf(","))] === "blue") {
+              // Keep the +1 because even if this line is moved below setDecSetsBlue, decSetsBlue will not be updated yet
+              setDecCountBlue(prev => prev + 1);
+              setDecSetsBlue(prev => prev.concat(data.check.setCard));
+            } else {
+              setDecCountRed(prev => prev + 1);
+              setDecSetsRed(prev => prev.concat(data.check.setCard));
+            }
           } else {
             alert(`❌ Declaration failed! ${data.check.message}`);
+            if (playerTeams[data.check.message.slice(0, data.check.message.indexOf(","))] === "blue") {
+              // Keep the +1 because even if this line is moved below setDecSetsBlue, decSetsBlue will not be updated yet
+              setDecCountRed(prev => prev + 1);
+              setDecSetsRed(prev => prev.concat(data.check.setCard));
+              // console.log("Blue declaration failed, updated count:", decCountRed + 1);
+            } else {
+              setDecCountBlue(prev => prev + 1);
+              setDecSetsBlue(prev => prev.concat(data.check.setCard));
+              // console.log("Red declaration failed, updated count:", decCountRed + 1);
+            }
           }
           // Update states off of finished declaration
           break;          
@@ -275,8 +300,8 @@ function App() {
             isOpponent={playerTeams[sidePlayers[0]] !== playerTeams[playerId]}
           />
           <DeclarationPile
-            decCount={decCountRed}
-            decSets={decSetsRed}
+            decCount={decCountBlue}
+            decSets={decSetsBlue}
             teamColor="blue"
           />
           <Declare
@@ -287,8 +312,8 @@ function App() {
             handleDeclareCheck={handleDeclareCheck}
           />
           <DeclarationPile
-            decCount={decCountBlue}
-            decSets={decSetsBlue}
+            decCount={decCountRed}
+            decSets={decSetsRed}
             teamColor="red"
           />
           <OpponentHand

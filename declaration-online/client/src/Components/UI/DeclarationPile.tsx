@@ -3,7 +3,7 @@ import { formatTextObjectToString, formatTextStringToSymbol } from "../../Types/
 
 interface DeclarationPileProps {
   decCount: number;
-  decSets: string[] | undefined;
+  decSets: string[];
   teamColor: string; // "red" | "blue"
 }
 
@@ -17,7 +17,7 @@ function DeclarationPile({
     deckType: "RegularCards",
     faceUp: false,
   }));
-  if (decSets) {
+  if (decSets.length > 0) {
     cards = decSets.map((cardName) => ({
     value: cardName,
     deckType: "RegularCards",

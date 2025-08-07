@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize players and game manager
-const players = ["player1", "player2", "player3", "player4", "player5", "player6"];
+export const players = ["player1", "player2", "player3", "player4", "player5", "player6"];
 const game = new GameManager(players);
 
 // REST endpoint: get hand for a single player
@@ -69,6 +69,7 @@ wss.on("connection", (socket) => {
 
   socket.on("message", (data) => {
     const msg = JSON.parse(data.toString()) as WSMessage;
+    console.log("Reseived message:", msg);
 
     // ------------------- LISTENED MSG LOGIC -------------------
     switch (msg.type) {
@@ -86,13 +87,13 @@ wss.on("connection", (socket) => {
         break;
 
       case "declareCheck":
-        const check = game.handleDeclareCheck(msg.targetIds, msg.cardsLeftPlayerCheck, msg.cardsRightPlayerCheck);
-        console.log("Received declareCheck for players:", msg, "Result:", check.correctCheck);
+        const check = game.handleDeclareCheck(msg.targetIds, msg.cardsLeftPlayerCheck, msg.cardsRightPlayerCheck, msg.set);
+        // console.log("Received declareCheck for players:", msg, "Result:", check.correctCheck);
         broadcast({
           type: "declareCheck_result",
           check: check,
         });
-        console.log("Sending declareCheck_result");
+        // console.log("Sending declareCheck_result");
         break;
     }
   });
@@ -104,7 +105,7 @@ wss.on("connection", (socket) => {
 
 type WSMessage =
   | { type: "ask"; playerId: string; targetPlayerId: string; card: string }
-  | { type: "declareCheck"; targetIds: string[], cardsLeftPlayerCheck: string[]; cardsRightPlayerCheck: string[] }
+  | { type: "declareCheck"; targetIds: string[], cardsLeftPlayerCheck: string[]; cardsRightPlayerCheck: string[], set: string[] }
   | { type: "message"; text: string };
 
 // Broadcast to all connected clients
