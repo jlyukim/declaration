@@ -102,7 +102,7 @@
 }
 
 /* initially show up upside down */
-.top-players .card-count-label{
+.top-players .card-count-label {
   transform: rotate(180deg);
 }
 
@@ -113,9 +113,9 @@
   justify-content: center;
 
   top: -3.75rem;
+  left: 1.75rem;
   width: 15rem;
   height: 2.75rem;
-  left: 1.75rem;
   
   background-color: black;
   color: #6A6A6A;
@@ -176,4 +176,35 @@
 
 .player-username.blue {
   background-color: #93E3E6;
+}
+
+.speech-bubble {
+  transform: rotate(180deg);
+  
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 2rem;
+
+  font-size: 25px;
+
+  border-radius: .5rem;
+}
+
+.speech-bubble.ask {
+    top: -6.75rem;
+    left: 1.75rem;
+    width: 15rem;
+    height: 2rem;
+  
+    background-color: black;
+}
+
+.speech-bubble.response {
+  top: -10rem;
+  left: 5rem;
+  width: 8rem;
+  height: 2rem;
 }

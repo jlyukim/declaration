@@ -26,7 +26,7 @@ function App() {
     { count: number; cards?: Card[] }
   > | null>(null);
 
-  const [lastAsk, setLastAsk] = useState<{ from: string; card: string } | null>(null);
+  const [lastAsk, setLastAsk] = useState<{ from: string; to: string; card: string, result: boolean } | null>(null);
   
   // Local state to maintain card order for the current player
   const [localHandOrder, setLocalHandOrder] = useState<Card[]>([]);
@@ -142,7 +142,6 @@ function App() {
           card: selectedOverlayCard,
         })
       );
-      setLastAsk({ from: playerId, card: selectedOverlayCard! });
     } else {
       alert("WebSocket is not connected.");
     }
@@ -195,7 +194,15 @@ function App() {
         case "ask_result":
           // Handle the result (show a message, update UI, etc.)
           console.log("Ask result:", data);
+          
+          setLastAsk({ 
+            from: data.playerId,
+            to: data.targetPlayerId,
+            card: data.card,
+            result: data.received
+          });
           break;
+
         case "declareCheck_result":
           // Handle the declare check result
           console.log("Declare check result:", data);
@@ -314,6 +321,7 @@ function App() {
               selectedTargetId={selectedTargetId}
               setSelectedTargetId={setSelectedTargetId}
               isOpponent={playerTeams[pid] !== playerTeams[playerId]}
+              askState={lastAsk}
             />
           ))}
         </div>
@@ -327,6 +335,7 @@ function App() {
             selectedTargetId={selectedTargetId}
             setSelectedTargetId={setSelectedTargetId}
             isOpponent={playerTeams[sidePlayers[0]] !== playerTeams[playerId]}
+            askState={lastAsk}
           />
           <DeclarationPile
             decCount={decCountBlue}
@@ -354,6 +363,7 @@ function App() {
             selectedTargetId={selectedTargetId}
             setSelectedTargetId={setSelectedTargetId}
             isOpponent={playerTeams[sidePlayers[1]] !== playerTeams[playerId]}
+            askState={lastAsk}
           />
         </div>
 

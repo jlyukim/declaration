@@ -13,7 +13,7 @@ interface OpponentHandProps {
     from: string;
     to: string;
     card: string;
-    result?: "has" | "not" | null;
+    result: boolean;
   } | null
 }
 
@@ -47,6 +47,7 @@ function OpponentHand({
 
   return (
     <div className={`opponent-hand opponent-${position}`}>
+      
       <div 
         className={`username-box ${teamColor} ${position} ${isSelected ? "selected" : ""}`}
         onClick={handleUsernameClick}
@@ -54,30 +55,30 @@ function OpponentHand({
       >
         <p className="username">{playerId}</p>
       </div>
+      
       <CardHand Cards={cardBacks} deckType="RegularCards" faceUp={false}/>
-      {cardCount > 4 && <div className="card-count-label">{cardCount}</div>}
+      {cardCount > 3 && <div className="card-count-label">{cardCount}</div>}
       {askState && askState.from === playerId && (
       // {/* {askState &&( */}
         <>
           <div className="speech-bubble ask">
-            {formatTextStringToSymbol(askState.card)}
+            {askState.to} {formatTextStringToSymbol(askState.card)}
           </div>
-          {console.log("askState in OpponentHand:", askState)}
+          {/* {console.log("askState in OpponentHand:", askState)} */}
         </>
         
       )}
-      {askState && askState.from === playerId && askState.result && (
-      // {/* {askState && askState.result && ( */}
-      <>
-        {console.log("Rendering response bubble for", playerId, "with result:", askState.result)}
-        <div className="speech-bubble response">
-          {askState.result === "has" ? "✅" : "❌"}
-          <div style={{ background: "red", zIndex: 9999 }}>
-            RESPONSE
+      {askState && askState.from === playerId && (
+        // {/* {askState && askState.result && ( */}
+        <>
+          {/* {console.log("Rendering response bubble for", playerId, "with result:", askState.result)} */}
+          <div className="speech-bubble response">
+            {askState.result ? "✅" : "❌"}
+            <div style={{ background: "red", zIndex: 9999 }}>
+            </div>
           </div>
-        </div>
-      </>
-    )}
+        </> 
+      )}
     </div>
   );
 }
