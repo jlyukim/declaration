@@ -56,6 +56,9 @@ app.get("/api/declarations", (req, res) => {
   res.json({ declarations: game.getDeclarations() });
 });
 
+app.get("/api/playerTurn", (req, res) => {
+  res.json({ turn: game.getCurrentTurn() });
+});
 
 // ------------------- WEBSOCKET SERVER -------------------
 

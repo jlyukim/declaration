@@ -30,6 +30,7 @@ function App() {
   
   // Local state to maintain card order for the current player
   const [localHandOrder, setLocalHandOrder] = useState<Card[]>([]);
+  const [playerTurn, setPlayerTurn] = useState<string>("player1"); // Default player turn, can be set dynamically
 
   // ------------------- WEBSOCKET CONNECTION -------------------
   useEffect(() => {
@@ -95,6 +96,11 @@ function App() {
   const [selectedSet, setSelectedSet] = useState<string | null>(null);
   const [selectedOverlayCard, setSelectedOverlayCard] = useState<string | null>(null); //this is the card getting asked
   const handleCardClick = (cardValue: string) => {
+    if (playerTurn !== playerId) {
+      alert("It's not your turn!");
+      return;
+    }
+
     setSelectedCardValue(cardValue);
     const cardSet = getSetFromCard(cardValue, sets);
 
@@ -291,9 +297,23 @@ function App() {
         })
         .catch(console.error);
     }
+
+    function fetchPlayerTurn() {
+      fetch(`http://localhost:3001/api/playerTurn`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Current player turn:", data.turn);
+          // You can use this data to highlight the current player's hand or take other actions
+          if (data.turn !== playerTurn) {
+            setPlayerTurn(data.turn);
+            console.log("Updated player turn state:", data.turn);
+          }
+        }).catch(console.error);
+    }
     
     fetchHands();
     fetchDeclarations();
+    fetchPlayerTurn();
     const interval = setInterval(fetchHands, 3000);
     return () => clearInterval(interval);
   }, [playerId, localHandOrder.length]); // Include localHandOrder.length to prevent infinite loops

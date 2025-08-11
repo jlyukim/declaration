@@ -179,7 +179,6 @@
 }
 
 .speech-bubble {
-  transform: rotate(180deg);
   
   position: absolute;
   display: flex;
@@ -207,4 +206,8 @@
   left: 5rem;
   width: 8rem;
   height: 2rem;
+}
+
+.opponent-top .speech-bubble.ask {
+  transform: rotate(180deg);
 }

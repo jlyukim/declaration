@@ -22,12 +22,14 @@ export class GameManager {
     deck = new Deck();
     hands: Record<PlayerID, Card[]> = {};
     players: PlayerID[] = [];
+    playerTurn: PlayerID = "player1"; // Placeholder until ids are set
     blueDeclarations: string[] = [];
     redDeclarations: string[] = [];
 
     constructor(playerIds: PlayerID[]) {
         this.players = playerIds;
         this.dealCards();
+        this.playerTurn = playerIds[0]; 
     }
 
     private dealCards() {
@@ -52,7 +54,14 @@ export class GameManager {
         };
     }
 
-    
+    getCurrentTurn(): PlayerID {
+        return this.playerTurn;
+    }
+
+    setCurrentTurn(playerId: PlayerID): void {
+        this.playerTurn = playerId;
+    }
+
     // ------------------- ASK + RESPONSE LOGIC -------------------
     handleAsk(playerId: PlayerID, targetId: PlayerID, cardName: string): {
         success: boolean;
@@ -73,6 +82,8 @@ export class GameManager {
         const targetIndex = targetHand.findIndex(
             (c) => JSON.stringify(c) === JSON.stringify(card)
         );
+
+        this.setCurrentTurn(targetId); // Set the target player as the current turn player
 
         // Target player has card - successful ask
         if (targetIndex !== -1) {
@@ -110,6 +121,7 @@ export class GameManager {
             (c) => JSON.stringify(c) === JSON.stringify(card)
         );
     }
+
     // ------------------- DECLARE CHECK LOGIC -------------------
     removeSetFromAllHands(set: string[]): void {
         for (const player of this.players) {
