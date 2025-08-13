@@ -15,6 +15,7 @@ interface OpponentHandProps {
     card: string;
     result: boolean;
   } | null
+  playerTurn: string; // ID of the player whose turn it is
 }
 
 function OpponentHand({
@@ -25,7 +26,8 @@ function OpponentHand({
   selectedTargetId,
   setSelectedTargetId,
   isOpponent,
-  askState
+  askState,
+  playerTurn
 }: OpponentHandProps) {
   const cardsToShow = Math.min(cardCount, 4);
   const cardBacks = Array.from({ length: cardsToShow }, (_, i) => ({
@@ -74,6 +76,16 @@ function OpponentHand({
           {/* {console.log("Rendering response bubble for", playerId, "with result:", askState.result)} */}
           <div className="speech-bubble response">
             {askState.result ? "✅" : "❌"}
+            <div style={{ background: "red", zIndex: 9999 }}>
+            </div>
+          </div>
+        </> 
+      )}
+      {playerTurn === playerId && (
+        <>
+          {/* {console.log("Rendering response bubble for", playerId, "with result:", askState.result)} */}
+          <div className="speech-bubble turn-indicator">
+            {"Current Turn"}
             <div style={{ background: "red", zIndex: 9999 }}>
             </div>
           </div>

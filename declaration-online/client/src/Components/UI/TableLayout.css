@@ -208,6 +208,17 @@
   height: 2rem;
 }
 
+.turn-indicator {
+  top: -10rem;
+  left: 5rem;
+  width: 8rem;
+  height: 2rem;
+}
+
 .opponent-top .speech-bubble.ask {
+  transform: rotate(180deg);
+}
+
+.opponent-top .turn-indicator {
   transform: rotate(180deg);
 }

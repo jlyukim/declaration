@@ -124,6 +124,11 @@ function App() {
       return;
     }
 
+    if (playerTurn !== playerId) {
+      alert("Select a player and a card first.");
+      return;
+    }
+
     // If asking for a card you already own, handle "give" logic (if needed)
     const ownsAskedCard = playerHand.some(
       (card) => formatTextObjectToString(card) === selectedOverlayCard
@@ -342,6 +347,7 @@ function App() {
               setSelectedTargetId={setSelectedTargetId}
               isOpponent={playerTeams[pid] !== playerTeams[playerId]}
               askState={lastAsk}
+              playerTurn={playerTurn}
             />
           ))}
         </div>
@@ -356,6 +362,7 @@ function App() {
             setSelectedTargetId={setSelectedTargetId}
             isOpponent={playerTeams[sidePlayers[0]] !== playerTeams[playerId]}
             askState={lastAsk}
+            playerTurn={playerTurn}
           />
           <DeclarationPile
             decCount={decCountBlue}
@@ -384,6 +391,8 @@ function App() {
             setSelectedTargetId={setSelectedTargetId}
             isOpponent={playerTeams[sidePlayers[1]] !== playerTeams[playerId]}
             askState={lastAsk}
+            playerTurn={playerTurn}
+
           />
         </div>
 
