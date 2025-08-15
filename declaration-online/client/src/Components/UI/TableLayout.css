@@ -222,3 +222,26 @@
 .opponent-top .turn-indicator {
   transform: rotate(180deg);
 }
+
+.current-player-hand .speech-bubble.ask { 
+  position: relative;
+  top: 0rem; 
+  left: 0rem;
+  margin-top: .5rem;
+} 
+
+.current-player-hand .response {
+  position: relative;
+  top: 0rem;
+  left: 0rem;
+  margin-top: .5rem;
+}
+
+.current-player-hand .speech-bubble.turn-indicator { 
+  position: relative;
+  top: 0rem;
+  left: 0rem;
+  width: 15rem;
+  height: 2rem;
+  margin-top: .5rem;
+}

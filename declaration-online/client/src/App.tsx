@@ -316,12 +316,12 @@ function App() {
         }).catch(console.error);
     }
     
-    fetchHands();
+    fetchHands(); 
     fetchDeclarations();
     fetchPlayerTurn();
     const interval = setInterval(fetchHands, 3000);
     return () => clearInterval(interval);
-  }, [playerId, localHandOrder.length]); // Include localHandOrder.length to prevent infinite loops
+  }, [playerId, lastAsk, localHandOrder.length]); // Include localHandOrder.length to prevent infinite loops
 
   const toggleDeck = () => {
     changeDeck((deck) =>
@@ -430,6 +430,26 @@ function App() {
               <div className="speech-bubble ask">
                 {formatTextStringToSymbol(lastAsk.card)}
               </div>
+            )}
+            {lastAsk?.from === playerId && (
+              <>
+                {/* {console.log("Rendering response bubble for", playerId, "with result:", askState.result)} */}
+                <div className="speech-bubble response">
+                  {lastAsk.result ? "✅" : "❌"}
+                  <div style={{ background: "red", zIndex: 9999 }}>
+                  </div>
+                </div>
+              </> 
+            )}
+            {playerTurn === playerId && (
+              <>
+                {/* {console.log("Rendering response bubble for", playerId, "with result:", askState.result)} */}
+                <div className="speech-bubble turn-indicator">
+                  {"Your Turn"}
+                  <div style={{ background: "red", zIndex: 9999 }}>
+                  </div>
+                </div>
+              </> 
             )}
           </div>
       </div>
